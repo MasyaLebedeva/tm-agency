@@ -18,12 +18,14 @@ export const metadata: Metadata = {
   robots: 'index, follow',
   icons: {
     icon: [
+      { url: '/favicon.ico', sizes: 'any' },
       { url: '/favicon.svg', type: 'image/svg+xml' },
       { url: '/favicon-16x16.svg', sizes: '16x16', type: 'image/svg+xml' }
     ],
     apple: [
       { url: '/apple-touch-icon.svg', sizes: '180x180', type: 'image/svg+xml' }
-    ]
+    ],
+    shortcut: '/favicon.ico'
   },
   openGraph: {
     title: 'T&M Agency - Рекламное агентство в Telegram',
@@ -47,6 +49,11 @@ export default function RootLayout({
 }) {
   return (
     <html lang="ru">
+      <head>
+        <link rel="icon" href="/favicon.ico" sizes="any" />
+        <link rel="icon" href="/favicon.svg" type="image/svg+xml" />
+        <link rel="apple-touch-icon" href="/apple-touch-icon.svg" />
+      </head>
       <body className={inter.className}>
         <Navbar />
         {children}
