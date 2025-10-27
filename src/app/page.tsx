@@ -23,7 +23,7 @@ const services = [
     price: 'от 3 000 ₽'
   },
   {
-    title: 'Оптимизация',
+    title: 'Оптимизация Telegram-канала',
     description: 'Оформление, контент, лид-магниты и воронки продаж',
     price: 'от 90 000 ₽'
   },
@@ -43,14 +43,14 @@ const services = [
     price: 'от 500 ₽'
   },
   {
-    title: 'Консультирование',
+    title: 'Консультация',
     description: 'Экспертная консультация по продвижению',
     price: 'Бесплатно'
   }
 ]
 
 const stats = [
-  { number: '3+', label: 'лет на рынке' },
+  { number: '5+', label: 'лет на рынке' },
   { number: '100+', label: 'довольных клиентов' },
   { number: '200+', label: 'успешных проектов' }
 ]
@@ -131,7 +131,7 @@ export default function Home() {
             </span>
           </h2>
           <p className="text-2xl sm:text-3xl md:text-4xl font-bold text-white mb-8 max-w-5xl leading-tight">
-            Мы оказываем полный спектр услуг необходимый для вашего продвижения в Телеграм
+            Мы оказываем полный спектр услуг, необходимый для вашего продвижения в Телеграм
           </p>
           <h3 className="text-2xl font-bold mb-8 text-[#2AABEE]">
             Самые популярные услуги
