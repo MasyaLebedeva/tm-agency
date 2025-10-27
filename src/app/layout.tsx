@@ -16,6 +16,15 @@ export const metadata: Metadata = {
   creator: 'T&M Agency',
   publisher: 'T&M Agency',
   robots: 'index, follow',
+  icons: {
+    icon: [
+      { url: '/favicon.svg', type: 'image/svg+xml' },
+      { url: '/favicon-16x16.svg', sizes: '16x16', type: 'image/svg+xml' }
+    ],
+    apple: [
+      { url: '/apple-touch-icon.svg', sizes: '180x180', type: 'image/svg+xml' }
+    ]
+  },
   openGraph: {
     title: 'T&M Agency - Рекламное агентство в Telegram',
     description: 'Первое рекламное агентство в Telegram, специализирующееся на продвижении каналов и ботов',
