@@ -44,8 +44,8 @@ export default function Cases() {
                 />
 
                 {/* Оверлей с ключевой информацией */}
-                <div className="absolute inset-0 bg-[#0A0A0A]/70 opacity-0 group-hover:opacity-100 transition-opacity duration-300" />
-                <div className="absolute inset-0 flex flex-col justify-end p-5 opacity-0 group-hover:opacity-100 transition-opacity duration-300">
+                <div className="absolute inset-0 bg-[#0A0A0A]/70 opacity-0 group-hover:opacity-100 transition-opacity duration-300 rounded-2xl" />
+                <div className="absolute inset-0 flex flex-col justify-end p-6 sm:p-7 lg:p-8 opacity-0 group-hover:opacity-100 transition-opacity duration-300">
                   <div className="flex items-center justify-between mb-2">
                     <span className="text-xs font-semibold text-[#2AABEE] bg-[#2AABEE]/10 px-2 py-1 rounded-full">
                       {caseItem.category}
