@@ -5,8 +5,10 @@ import Link from 'next/link'
 
 export default function CookieBanner() {
   const [isVisible, setIsVisible] = useState(false)
+  const [isMounted, setIsMounted] = useState(false)
 
   useEffect(() => {
+    setIsMounted(true)
     // Проверяем, принял ли пользователь cookies
     const cookiesAccepted = localStorage.getItem('cookiesAccepted')
     if (!cookiesAccepted) {
@@ -24,7 +26,8 @@ export default function CookieBanner() {
     setIsVisible(false)
   }
 
-  if (!isVisible) return null
+  // Не рендерим до монтирования компонента
+  if (!isMounted || !isVisible) return null
 
   return (
     <div className="fixed bottom-0 left-0 right-0 z-50 bg-[#232E3C] border-t border-[#2AABEE]/20 p-4 shadow-lg">
