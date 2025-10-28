@@ -186,7 +186,7 @@ export default function Home() {
                 {/* Фото Марии */}
                 <div className="relative group">
                   <Image
-                    src="/maria.png"
+                    src="/maria.PNG"
                     alt="Мария Лебедева - основатель T&M Agency"
                     width={166}
                     height={300}
@@ -200,7 +200,7 @@ export default function Home() {
                 {/* Фото Татьяны */}
                 <div className="relative group">
                   <Image
-                    src="/tatyana.png"
+                    src="/tatyana.PNG"
                     alt="Татьяна Сысуева - основатель T&M Agency"
                     width={168}
                     height={300}
