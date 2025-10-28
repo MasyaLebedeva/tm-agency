@@ -8,14 +8,14 @@ import ContactModal from '@/components/ContactModal'
 
 const services = [
   {
-    title: 'Посевы',
-    description: 'Продвижение через посевы в тематических каналах',
-    price: 'от 100 000 ₽'
-  },
-  {
     title: 'Telegram ADS',
     description: 'Настройка и ведение рекламных кампаний в Telegram',
     price: 'от 150 000 ₽'
+  },
+  {
+    title: 'Посевы',
+    description: 'Продвижение через посевы в тематических каналах',
+    price: 'от 100 000 ₽'
   },
   {
     title: 'Креативы',
@@ -129,6 +129,7 @@ export default function Home() {
             <span className="bg-clip-text text-transparent bg-gradient-to-r from-[#2AABEE] to-[#229ED9]">
               УСЛУГИ
             </span>
+            {/* Telegram ADS теперь первый! */}
           </h2>
           <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-6 sm:gap-8 mb-12 sm:mb-16 lg:mb-20">
             {services.map((service, index) => (
