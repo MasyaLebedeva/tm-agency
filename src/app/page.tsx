@@ -197,7 +197,7 @@ export default function Home() {
             {/* Подпись */}
             <div className="text-center mt-6">
               <p className="text-sm font-medium text-white">
-                <span className="text-accent">Т</span>атьяна Сысуева & <span className="text-accent">М</span>ария Лебедева
+                <span className="text-accent">Т</span>атьяна Сысуева <span className="text-accent">&</span> <span className="text-accent">М</span>ария Лебедева
               </p>
             </div>
             </div>
