@@ -42,6 +42,7 @@ export default function Navbar() {
             <button 
               onClick={() => setIsModalOpen(true)}
               className="bg-gradient-to-r from-[#2AABEE] to-[#229ED9] text-white px-6 py-2 rounded-full font-bold text-lg hover:opacity-90 transition-all duration-300 transform hover:scale-105"
+              data-open-contact-modal="true"
             >
               Оставить заявку
             </button>

@@ -92,11 +92,11 @@ export default function CaseDetail({ params }: { params: { id: string } }) {
               <p className="text-gray-300 mb-6">
                 Мы поможем вам создать эффективную систему продвижения в Telegram
               </p>
+              {/* Кнопка должна открывать модалку. На детальной странице нет состояния, поэтому используем data-атрибут и ловим его в Navbar/глобально при необходимости. Пока заменим на переход к /contacts как резерв. */}
               <Link 
-                href="https://t.me/TM_agency_TG_bot"
-                target="_blank"
-                rel="noopener noreferrer"
+                href="#contact"
                 className="inline-flex items-center bg-gradient-to-r from-[#2AABEE] to-[#229ED9] text-white px-8 py-4 rounded-full font-semibold hover:opacity-90 transition-all duration-300 transform hover:scale-105"
+                onClick={(e) => { e.preventDefault(); const btn = document.querySelector('[data-open-contact-modal="true"]') as HTMLButtonElement | null; btn?.click(); }}
               >
                 Получить консультацию
               </Link>

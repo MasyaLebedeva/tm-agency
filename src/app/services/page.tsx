@@ -45,7 +45,7 @@ const services = [
     icon: '🎨'
   },
   {
-    title: 'Оптимизация',
+    title: 'Оптимизация Telegram-канала',
     description: 'Оформление, контент, лид-магниты и воронки продаж',
     price: 'от 90 000 ₽',
     features: [
@@ -157,13 +157,13 @@ export default function Services() {
           </div>
 
           {/* Services Grid */}
-          <div className="grid grid-cols-1 lg:grid-cols-2 gap-6 sm:gap-8 mb-12 sm:mb-16 lg:mb-20">
+          <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-6 sm:gap-8 mb-12 sm:mb-16 lg:mb-20">
             {services.map((service, index) => (
               <div 
                 key={index}
                 className="group relative overflow-hidden rounded-2xl bg-[#232E3C]/50 backdrop-blur-sm border border-[#2AABEE]/20 hover:border-[#2AABEE]/40 transition-all duration-300 hover:bg-[#232E3C]/70"
               >
-                <div className="p-6 sm:p-8">
+                <div className="aspect-square p-6 sm:p-8 flex flex-col">
                   <div className="flex items-center mb-6">
                     <span className="text-3xl sm:text-4xl mr-3 sm:mr-4">{service.icon}</span>
                     <div>
@@ -174,7 +174,7 @@ export default function Services() {
                     </div>
                   </div>
                   
-                  <div className="mb-6">
+                  <div className="mb-6 flex-1">
                     <h4 className="text-lg font-semibold mb-4 text-white">Что входит в услугу:</h4>
                     <ul className="space-y-2">
                       {service.features.map((feature, featureIndex) => (
