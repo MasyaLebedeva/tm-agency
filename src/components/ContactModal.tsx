@@ -94,7 +94,7 @@ export default function ContactModal({ isOpen, onClose }: ContactModalProps) {
       onClick={onClose}
     >
       <div 
-        className="relative bg-[#232E3C] rounded-2xl p-4 max-w-xl w-full mx-4 border border-[#2AABEE]/20"
+        className="relative bg-[#232E3C] rounded-2xl p-4 max-w-xl w-full mx-4 border border-[#2AABEE]/20 max-h-[85vh] overflow-y-auto"
         onClick={(e) => e.stopPropagation()}
       >
         {/* Close button */}
@@ -216,7 +216,7 @@ export default function ContactModal({ isOpen, onClose }: ContactModalProps) {
           </div>
 
           {/* Option 2: Bot */}
-          <div className="bg-[#229ED9]/10 rounded-xl p-6 border border-[#229ED9]/20">
+          <div className="bg-[#229ED9]/10 rounded-xl p-4 sm:p-6 border border-[#229ED9]/20">
             <h3 className="text-xl font-bold mb-4 text-[#229ED9]">
               Оставить заявку в боте
             </h3>
