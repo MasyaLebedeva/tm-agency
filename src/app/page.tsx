@@ -130,12 +130,6 @@ export default function Home() {
               УСЛУГИ
             </span>
           </h2>
-          <p className="body-large text-white mb-8 max-w-5xl">
-            Мы оказываем полный спектр услуг, необходимый для вашего продвижения в Телеграм
-          </p>
-          <h3 className="heading-4 mb-8 text-accent">
-            Самые популярные услуги
-          </h3>
           <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-6 sm:gap-8 mb-12 sm:mb-16 lg:mb-20">
             {services.map((service, index) => (
               <div 
