@@ -188,11 +188,10 @@ export default function Home() {
                   <Image
                     src="/maria.PNG"
                     alt="Мария Лебедева - основатель T&M Agency"
-                    width={664}
-                    height={1200}
-                    className="w-full h-auto rounded-2xl max-w-md"
-                    style={{ background: 'transparent' }}
-                    quality={100}
+                    width={332}
+                    height={600}
+                    className="h-auto rounded-2xl w-[280px] sm:w-[360px] md:w-[420px] lg:w-[520px]"
+                    sizes="(min-width: 1024px) 520px, (min-width: 768px) 420px, (min-width: 640px) 360px, 280px"
                     priority
                   />
                 </div>
@@ -202,11 +201,10 @@ export default function Home() {
                   <Image
                     src="/tatyana.PNG"
                     alt="Татьяна Сысуева - основатель T&M Agency"
-                    width={672}
-                    height={1200}
-                    className="w-full h-auto rounded-2xl max-w-md"
-                    style={{ background: 'transparent' }}
-                    quality={100}
+                    width={336}
+                    height={600}
+                    className="h-auto rounded-2xl w-[280px] sm:w-[360px] md:w-[420px] lg:w-[520px]"
+                    sizes="(min-width: 1024px) 520px, (min-width: 768px) 420px, (min-width: 640px) 360px, 280px"
                     priority
                   />
                 </div>
