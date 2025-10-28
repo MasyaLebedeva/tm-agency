@@ -1,4 +1,34 @@
 export const blogPosts = [
+{
+    id: 19,
+    title: "Делаем интерфейс дружелюбнее. Коллекция простых HTML/CSS лайфхаков",
+    description: "Делаем интерфейс дружелюбнее. Коллекция простых HTML/CSS лайфхаков",
+    date: '2025-10-28',
+    readTime: 3,
+    category: 'Telegram',
+    keywords: ["Telegram","TON","реклама","боты"],
+    content: ""
+  },
+{
+    id: 20,
+    title: "Менеджер в квадрате: как принцип «Одна голова хорошо, а две лучше» работает на практике",
+    description: "Менеджер в квадрате: как принцип «Одна голова хорошо, а две лучше» работает на практике",
+    date: '2025-10-28',
+    readTime: 3,
+    category: 'Telegram',
+    keywords: ["Telegram","TON","реклама","боты"],
+    content: ""
+  },
+{
+    id: 21,
+    title: "Изучаем Python: модуль csv для начинающих с домашним заданием",
+    description: "Изучаем Python: модуль csv для начинающих с домашним заданием",
+    date: '2025-10-28',
+    readTime: 3,
+    category: 'Telegram',
+    keywords: ["Telegram","TON","реклама","боты"],
+    content: ""
+  },
   {
     id: 1,
     title: 'Как создать успешный Telegram-канал: полное руководство 2025',
