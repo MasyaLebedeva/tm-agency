@@ -5,6 +5,7 @@ import { Inter } from 'next/font/google'
 import Navbar from '../components/Navbar'
 import Footer from '../components/Footer'
 import CookieBanner from '../components/CookieBanner'
+import ScrollToTop from '../components/ScrollToTop'
 
 const inter = Inter({ subsets: ['latin', 'cyrillic'] })
 
@@ -60,6 +61,7 @@ export default function RootLayout({
         {children}
         <Footer />
         <CookieBanner />
+        <ScrollToTop />
       </body>
     </html>
   )
