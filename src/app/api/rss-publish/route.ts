@@ -176,7 +176,13 @@ export async function GET() {
   const current = Buffer.from(fileJson.content, 'base64').toString('utf8')
 
   // Определяем следующий id
-  const idMatch = [...current.matchAll(/id:\s*(\d+)/g)].map((m) => parseInt(m[1])).sort((a, b) => b - a)
+  const idRegex = /id:\s*(\d+)/g
+  const idArr: number[] = []
+  let idm: RegExpExecArray | null
+  while ((idm = idRegex.exec(current)) !== null) {
+    idArr.push(parseInt(idm[1]))
+  }
+  const idMatch = idArr.sort((a, b) => b - a)
   const nextIdStart = (idMatch[0] || 0) + 1
 
   const postsTs = articles
