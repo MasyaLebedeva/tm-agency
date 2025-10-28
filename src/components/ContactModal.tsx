@@ -94,7 +94,7 @@ export default function ContactModal({ isOpen, onClose }: ContactModalProps) {
       onClick={onClose}
     >
       <div 
-        className="relative bg-[#232E3C] rounded-2xl p-4 max-w-md w-full mx-4 border border-[#2AABEE]/20"
+        className="relative bg-[#232E3C] rounded-2xl p-4 max-w-xl w-full mx-4 border border-[#2AABEE]/20"
         onClick={(e) => e.stopPropagation()}
       >
         {/* Close button */}
