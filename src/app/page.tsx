@@ -182,33 +182,17 @@ export default function Home() {
               </div>
             </div>
             <div className="relative animate-slide-in-right">
-              <div className="flex gap-6 justify-center items-end">
-                {/* Фото Марии */}
-                <div className="relative group">
-                  <Image
-                    src="/maria.PNG"
-                    alt="Мария Лебедева - основатель T&M Agency"
-                    width={332}
-                    height={600}
-                    className="h-auto rounded-2xl w-[280px] sm:w-[360px] md:w-[420px] lg:w-[520px]"
-                    sizes="(min-width: 1024px) 520px, (min-width: 768px) 420px, (min-width: 640px) 360px, 280px"
-                    priority
-                  />
-                </div>
-                
-                {/* Фото Татьяны */}
-                <div className="relative group">
-                  <Image
-                    src="/tatyana.PNG"
-                    alt="Татьяна Сысуева - основатель T&M Agency"
-                    width={336}
-                    height={600}
-                    className="h-auto rounded-2xl w-[280px] sm:w-[360px] md:w-[420px] lg:w-[520px]"
-                    sizes="(min-width: 1024px) 520px, (min-width: 768px) 420px, (min-width: 640px) 360px, 280px"
-                    priority
-                  />
-                </div>
-              </div>
+              <Image
+                src="/founders.png"
+                alt="Татьяна Сысуева & Мария Лебедева - основатели T&M Agency"
+                width={527}
+                height={600}
+                className="w-full h-auto rounded-2xl max-w-xl mx-auto"
+                style={{ background: 'transparent' }}
+                quality={100}
+                priority
+                sizes="(max-width: 768px) 280px, (max-width: 1024px) 360px, (max-width: 1280px) 420px, 527px"
+              />
               
               {/* Подпись */}
               <div className="text-center mt-6">
