@@ -1,6 +1,7 @@
 import { NextResponse } from 'next/server'
 export const runtime = 'nodejs'
 export const dynamic = 'force-dynamic'
+// note: forced trivial change to ensure latest source is deployed
 
 // Простая RSS обработка без внешних зависимостей
 async function fetchRss(url: string): Promise<Array<{ title: string; link: string; summary?: string }>> {
