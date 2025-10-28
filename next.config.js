@@ -3,7 +3,8 @@ const nextConfig = {
   reactStrictMode: true,
   swcMinify: true,
   images: {
-    unoptimized: true,
+    quality: 95,
+    formats: ['image/webp', 'image/avif'],
   },
   output: 'standalone',
 }

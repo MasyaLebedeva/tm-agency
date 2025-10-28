@@ -186,10 +186,11 @@ export default function Home() {
                 <Image
                   src="/founders.png"
                   alt="Татьяна Сысуева и Мария Лебедева - основатели T&M Agency"
-                  width={800}
-                  height={800}
-                  className="w-full"
+                  width={607}
+                  height={866}
+                  className="w-full h-auto"
                   style={{ background: 'transparent' }}
+                  quality={95}
                   priority
                 />
                 <div className="absolute inset-0 flex items-end justify-center bg-gradient-to-t from-black/80 to-transparent">
