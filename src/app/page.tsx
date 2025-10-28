@@ -182,23 +182,40 @@ export default function Home() {
               </div>
             </div>
             <div className="relative animate-slide-in-right">
-              <div className="relative group overflow-hidden rounded-2xl">
-                <Image
-                  src="/founders.png"
-                  alt="Татьяна Сысуева и Мария Лебедева - основатели T&M Agency"
-                  width={527}
-                  height={600}
-                  className="w-full max-w-xl mx-auto h-auto"
-                  style={{ background: 'transparent' }}
-                  quality={100}
-                  priority
-                />
-                <div className="absolute inset-0 flex items-end justify-center bg-gradient-to-t from-black/80 to-transparent">
-                  <div className="text-center p-8">
-                    <p className="body-medium font-semibold text-white mb-2">Татьяна Сысуева & Мария Лебедева</p>
-                    <p className="body-medium text-accent">Основатели T&M Agency</p>
-                  </div>
+              <div className="flex gap-4 justify-center items-end">
+                {/* Фото Марии */}
+                <div className="relative group">
+                  <Image
+                    src="/maria.png"
+                    alt="Мария Лебедева - основатель T&M Agency"
+                    width={250}
+                    height={300}
+                    className="w-full h-auto rounded-2xl"
+                    style={{ background: 'transparent' }}
+                    quality={100}
+                    priority
+                  />
                 </div>
+                
+                {/* Фото Татьяны */}
+                <div className="relative group">
+                  <Image
+                    src="/tatyana.png"
+                    alt="Татьяна Сысуева - основатель T&M Agency"
+                    width={250}
+                    height={300}
+                    className="w-full h-auto rounded-2xl"
+                    style={{ background: 'transparent' }}
+                    quality={100}
+                    priority
+                  />
+                </div>
+              </div>
+              
+              {/* Подпись */}
+              <div className="text-center mt-6">
+                <p className="body-medium font-semibold text-white mb-2">Татьяна Сысуева & Мария Лебедева</p>
+                <p className="body-medium text-accent">Основатели T&M Agency</p>
               </div>
             </div>
           </div>
