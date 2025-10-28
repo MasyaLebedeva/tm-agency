@@ -7,6 +7,19 @@ import ContactModal from '@/components/ContactModal'
 
 export default function Blog() {
   const [isModalOpen, setIsModalOpen] = useState(false)
+  // Удаляем дубли по title+date, чтобы не показывать повторяющиеся авто-посты
+  const unique = React.useMemo(() => {
+    const seen = new Set<string>()
+    const result: typeof blogPosts = [] as any
+    for (const p of blogPosts) {
+      const key = `${p.title}__${p.date}`
+      if (!seen.has(key)) {
+        seen.add(key)
+        result.push(p)
+      }
+    }
+    return result
+  }, [])
 
   return (
     <main className="min-h-screen bg-gradient-to-b from-[#0A0A0A] to-[#17212B] text-white pt-32">
@@ -18,7 +31,7 @@ export default function Blog() {
 
         <div className="max-w-4xl mx-auto">
           <div className="grid grid-cols-1 gap-8 mb-16">
-            {blogPosts.map((post, index) => (
+            {unique.map((post, index) => (
               <div 
                 key={index}
                 className="group relative overflow-hidden rounded-2xl bg-[#232E3C]/50 backdrop-blur-sm border border-[#2AABEE]/20 hover:border-[#2AABEE]/40 transition-all duration-300 hover-lift animate-fade-in-up"
@@ -30,7 +43,7 @@ export default function Blog() {
                     <span className="mx-2 text-gray-500">•</span>
                     <span className="text-gray-400">{post.date}</span>
                     <span className="mx-2 text-gray-500">•</span>
-                    <span className="text-gray-400">{post.readTime} чтения</span>
+                    <span className="text-gray-400">{typeof post.readTime === 'number' ? `${post.readTime} мин` : (post.readTime || '—')} чтения</span>
                   </div>
                   
                   <h2 className="text-2xl font-bold mb-4 group-hover:text-[#2AABEE] transition-colors">

@@ -117,7 +117,7 @@ function buildPostObject(id: number, title: string, content: string, keywords: s
     title: ${JSON.stringify(title)},
     description: ${JSON.stringify(title)},
     date: '${date}',
-    readTime: ${readTime},
+    readTime: '${readTime} мин',
     category: 'Telegram',
     keywords: ${JSON.stringify(keywords)},
     content: ${JSON.stringify(content)}

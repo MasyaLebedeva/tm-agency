@@ -56,7 +56,7 @@ export default function BlogPost({ params }: { params: { id: string } }) {
               </span>
               <span className="text-gray-400">{post.date}</span>
               <span className="mx-2 text-gray-500">•</span>
-              <span className="text-gray-400">{post.readTime} чтения</span>
+              <span className="text-gray-400">{typeof post.readTime === 'number' ? `${post.readTime} мин` : (post.readTime || '—')} чтения</span>
             </div>
             
             <h1 className="text-4xl sm:text-5xl md:text-6xl font-bold mb-6 leading-tight">
@@ -70,10 +70,29 @@ export default function BlogPost({ params }: { params: { id: string } }) {
 
           {/* Article Content */}
           <article className="prose prose-lg prose-invert max-w-none">
-            <div 
-              className="text-lg leading-relaxed space-y-6"
-              dangerouslySetInnerHTML={{ __html: post.content }}
-            />
+            {(() => {
+              const html = (post.content || '').trim()
+              const hasContent = html.length > 80
+              const fallback = `
+                <h2>${post.title}</h2>
+                <p>${post.description || 'Статья будет дополнена в ближайшее время. Мы уже готовим подробный материал по теме.'}</p>
+                <h3>Ключевые тезисы</h3>
+                <ul>
+                  <li>Актуальность темы для продвижения в Telegram</li>
+                  <li>Практические рекомендации и лучшие практики</li>
+                  <li>Инструменты и метрики, на которые стоит опираться</li>
+                </ul>
+                <h3>Что дальше</h3>
+                <p>Если вам нужна консультация по теме «${post.title}», оставьте заявку — подскажем, как применить это к вашему проекту.</p>
+              `
+              const contentHtml = hasContent ? html : fallback
+              return (
+                <div
+                  className="text-lg leading-relaxed space-y-6"
+                  dangerouslySetInnerHTML={{ __html: contentHtml }}
+                />
+              )
+            })()}
           </article>
 
           {/* Related Articles */}
