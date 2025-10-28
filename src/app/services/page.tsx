@@ -97,8 +97,8 @@ const services = [
     icon: '📋'
   },
   {
-    title: 'Консультирование',
-    description: 'Экспертная консультация по продвижению',
+    title: 'Консультация',
+    description: 'Экспертная консультация\nпо продвижению',
     price: 'Бесплатно',
     features: [
       'Аудит текущей стратегии',
@@ -170,7 +170,7 @@ export default function Services() {
                       <h3 className="text-2xl sm:text-3xl font-bold mb-2 group-hover:text-[#2AABEE] transition-colors">
                         {service.title}
                       </h3>
-                      <p className="text-lg sm:text-xl text-gray-300">{service.description}</p>
+                      <p className="text-lg sm:text-xl text-gray-300 whitespace-pre-line">{service.description}</p>
                     </div>
                   </div>
                   
