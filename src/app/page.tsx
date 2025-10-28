@@ -182,24 +182,21 @@ export default function Home() {
               </div>
             </div>
             <div className="relative animate-slide-in-right">
-              <Image
-                src="/founders.png"
-                alt="Татьяна Сысуева & Мария Лебедева - основатели T&M Agency"
-                width={501}
-                height={710}
-                className="w-full h-auto rounded-2xl mx-auto max-w-[501px]"
-                style={{ background: 'transparent' }}
-                quality={100}
-                priority
-                sizes="(max-width: 768px) 280px, (max-width: 1024px) 360px, (max-width: 1280px) 420px, 501px"
-              />
-              
-            {/* Подпись */}
-            <div className="text-center mt-6">
-              <p className="text-sm font-medium text-white">
-                <span className="text-accent">Т</span>атьяна Сысуева <span className="text-accent">&</span> <span className="text-accent">М</span>ария Лебедева
-              </p>
-            </div>
+              <div className="relative">
+                <Image
+                  src="/founders.png"
+                  alt="Татьяна Сысуева & Мария Лебедева - основатели T&M Agency"
+                  width={501}
+                  height={710}
+                  className="w-full h-auto rounded-2xl mx-auto max-w-[501px]"
+                  style={{ background: 'transparent' }}
+                  quality={100}
+                  priority
+                  sizes="(max-width: 768px) 280px, (max-width: 1024px) 360px, (max-width: 1280px) 420px, 501px"
+                />
+                {/* Темная виньетка снизу */}
+                <div className="absolute bottom-0 left-0 right-0 h-20 bg-gradient-to-t from-[#0A0A0A] to-transparent rounded-b-2xl"></div>
+              </div>
             </div>
           </div>
         </div>
