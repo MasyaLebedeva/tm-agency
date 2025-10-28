@@ -187,7 +187,7 @@ export default function Home() {
                 alt="Татьяна Сысуева & Мария Лебедева - основатели T&M Agency"
                 width={501}
                 height={710}
-                className="w-full h-auto rounded-2xl max-w-xl mx-auto"
+                className="w-full h-auto rounded-2xl mx-auto max-w-[501px]"
                 style={{ background: 'transparent' }}
                 quality={100}
                 priority
