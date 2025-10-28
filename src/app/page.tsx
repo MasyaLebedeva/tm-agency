@@ -182,15 +182,15 @@ export default function Home() {
               </div>
             </div>
             <div className="relative animate-slide-in-right">
-              <div className="flex gap-4 justify-center items-end">
+              <div className="flex gap-6 justify-center items-end">
                 {/* Фото Марии */}
                 <div className="relative group">
                   <Image
                     src="/maria.PNG"
                     alt="Мария Лебедева - основатель T&M Agency"
-                    width={166}
-                    height={300}
-                    className="w-full h-auto rounded-2xl"
+                    width={664}
+                    height={1200}
+                    className="w-full h-auto rounded-2xl max-w-md"
                     style={{ background: 'transparent' }}
                     quality={100}
                     priority
@@ -202,9 +202,9 @@ export default function Home() {
                   <Image
                     src="/tatyana.PNG"
                     alt="Татьяна Сысуева - основатель T&M Agency"
-                    width={168}
-                    height={300}
-                    className="w-full h-auto rounded-2xl"
+                    width={672}
+                    height={1200}
+                    className="w-full h-auto rounded-2xl max-w-md"
                     style={{ background: 'transparent' }}
                     quality={100}
                     priority
