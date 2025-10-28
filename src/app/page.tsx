@@ -188,7 +188,7 @@ export default function Home() {
                   <Image
                     src="/maria.png"
                     alt="Мария Лебедева - основатель T&M Agency"
-                    width={250}
+                    width={166}
                     height={300}
                     className="w-full h-auto rounded-2xl"
                     style={{ background: 'transparent' }}
@@ -202,7 +202,7 @@ export default function Home() {
                   <Image
                     src="/tatyana.png"
                     alt="Татьяна Сысуева - основатель T&M Agency"
-                    width={250}
+                    width={168}
                     height={300}
                     className="w-full h-auto rounded-2xl"
                     style={{ background: 'transparent' }}
