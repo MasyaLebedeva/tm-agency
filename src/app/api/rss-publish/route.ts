@@ -7,8 +7,13 @@ async function fetchRss(url: string): Promise<Array<{ title: string; link: strin
   try {
     const res = await fetch(url, { cache: 'no-store' })
     const xml = await res.text()
-    // Примитивный парсинг RSS (item -> title/link/description)
-    const items = Array.from(xml.matchAll(/<item>[\s\S]*?<\/item>/g))
+    // Примитивный парсинг RSS (item -> title/link/description) без matchAll
+    const itemRegex = /<item>[\s\S]*?<\/item>/g
+    const items: RegExpExecArray[] = []
+    let match: RegExpExecArray | null
+    while ((match = itemRegex.exec(xml)) !== null) {
+      items.push(match)
+    }
     return items.slice(0, 8).map((m) => {
       const block = m[0]
       const titleMatch = block.match(/<title><!\[CDATA\[(.*?)\]\]><\/title>|<title>(.*?)<\/title>/)
