@@ -182,20 +182,17 @@ export default function Home() {
               </div>
             </div>
             <div className="relative animate-slide-in-right">
-              <div className="absolute -inset-4 bg-gradient-to-r from-[#2AABEE] to-[#229ED9] opacity-30 blur-xl animate-pulse"></div>
-              <div className="relative group overflow-hidden rounded-2xl hover-scale">
-                <div className="absolute inset-0 bg-gradient-to-r from-[#2AABEE]/20 to-[#229ED9]/20 opacity-0 group-hover:opacity-100 transition-opacity duration-300"></div>
-                <div className="absolute inset-0 backdrop-blur-[2px] opacity-0 group-hover:opacity-100 transition-opacity duration-300"></div>
+              <div className="relative group overflow-hidden rounded-2xl">
                 <Image
                   src="/founders.png"
                   alt="Татьяна Сысуева и Мария Лебедева - основатели T&M Agency"
                   width={800}
                   height={800}
-                  className="w-full transform transition-transform duration-300 group-hover:scale-105"
+                  className="w-full"
                   style={{ background: 'transparent' }}
                   priority
                 />
-                <div className="absolute inset-0 flex items-end justify-center bg-gradient-to-t from-black/80 to-transparent opacity-0 group-hover:opacity-100 transition-opacity duration-300">
+                <div className="absolute inset-0 flex items-end justify-center bg-gradient-to-t from-black/80 to-transparent">
                   <div className="text-center p-8">
                     <p className="body-medium font-semibold text-white mb-2">Татьяна Сысуева & Мария Лебедева</p>
                     <p className="body-medium text-accent">Основатели T&M Agency</p>
