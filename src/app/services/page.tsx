@@ -157,7 +157,7 @@ export default function Services() {
           </div>
 
           {/* Services Grid */}
-          <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-6 sm:gap-8 mb-12 sm:mb-16 lg:mb-20">
+          <div className="grid grid-cols-1 sm:grid-cols-2 gap-6 sm:gap-8 mb-12 sm:mb-16 lg:mb-20">
             {services.map((service, index) => (
               <div 
                 key={index}
@@ -189,7 +189,7 @@ export default function Services() {
                   </div>
                   
                   <div className="flex flex-col sm:flex-row items-start sm:items-center justify-between gap-4">
-                    <span className="text-2xl sm:text-3xl font-bold text-[#2AABEE]">{service.price}</span>
+                    <span className="text-xl sm:text-2xl font-bold text-[#2AABEE]">{service.price}</span>
                     <button 
                       onClick={() => setIsModalOpen(true)}
                       className="bg-gradient-to-r from-[#2AABEE] to-[#229ED9] text-white px-6 py-3 rounded-full font-semibold hover:opacity-90 transition-all duration-300 transform hover:scale-105 w-full sm:w-auto text-center"
