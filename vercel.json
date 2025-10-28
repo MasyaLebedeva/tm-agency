@@ -1,7 +1,2 @@
 {
-  "crons": [
-    { "path": "/api/rss-publish", "schedule": "0 7 * * *" },
-    { "path": "/api/rss-publish", "schedule": "0 13 * * *" },
-    { "path": "/api/rss-publish", "schedule": "0 19 * * *" }
-  ]
-}
+ 
