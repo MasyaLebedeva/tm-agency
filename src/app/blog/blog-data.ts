@@ -1,5 +1,35 @@
 export const blogPosts = [
 {
+    id: 28,
+    title: "Сравнение Rust и Carbon",
+    description: "Сравнение Rust и Carbon",
+    date: '2025-10-28',
+    readTime: 3,
+    category: 'Telegram',
+    keywords: ["Telegram","TON","реклама","боты"],
+    content: ""
+  },
+{
+    id: 29,
+    title: "Стоит ли заниматься вайб-кодингом для разработки игр",
+    description: "Стоит ли заниматься вайб-кодингом для разработки игр",
+    date: '2025-10-28',
+    readTime: 3,
+    category: 'Telegram',
+    keywords: ["Telegram","TON","реклама","боты"],
+    content: ""
+  },
+{
+    id: 30,
+    title: "Делаем интерфейс дружелюбнее. Коллекция простых HTML/CSS лайфхаков",
+    description: "Делаем интерфейс дружелюбнее. Коллекция простых HTML/CSS лайфхаков",
+    date: '2025-10-28',
+    readTime: 3,
+    category: 'Telegram',
+    keywords: ["Telegram","TON","реклама","боты"],
+    content: ""
+  },
+{
     id: 25,
     title: "Стоит ли заниматься вайб-кодингом для разработки игр",
     description: "Стоит ли заниматься вайб-кодингом для разработки игр",
