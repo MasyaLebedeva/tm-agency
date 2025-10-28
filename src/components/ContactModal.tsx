@@ -107,14 +107,7 @@ export default function ContactModal({ isOpen, onClose }: ContactModalProps) {
           </svg>
         </button>
 
-        <div className="text-center mb-4">
-          <h2 className="text-2xl font-bold mb-2">
-            Свяжитесь с нами
-          </h2>
-          <p className="text-gray-300 text-sm">
-            Выберите удобный способ связи
-          </p>
-        </div>
+        {/* Заголовок и подзаголовок убраны для уменьшения высоты */}
 
         <div className="space-y-4">
           {/* Option 1: We contact you */}
@@ -122,9 +115,7 @@ export default function ContactModal({ isOpen, onClose }: ContactModalProps) {
             <h3 className="text-lg font-bold mb-2 text-[#2AABEE]">
               Мы сами напишем вам
             </h3>
-            <p className="text-gray-300 mb-3 text-sm">
-              Оставьте свои контакты, и мы свяжемся с вами в течение часа
-            </p>
+            {/* Текст о сроках связи убран для уменьшения высоты */}
             
             <form onSubmit={handleSubmit} className="space-y-3">
               <div>
