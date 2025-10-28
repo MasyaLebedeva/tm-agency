@@ -1,5 +1,35 @@
 export const blogPosts = [
 {
+    id: 31,
+    title: "Когда сбой — не катастрофа: настраиваем отказоустойчивый кластер Usergate NGFW",
+    description: "Когда сбой — не катастрофа: настраиваем отказоустойчивый кластер Usergate NGFW",
+    date: '2025-10-28',
+    readTime: 3,
+    category: 'Telegram',
+    keywords: ["Telegram","TON","реклама","боты"],
+    content: ""
+  },
+{
+    id: 32,
+    title: "Сравнение Rust и Carbon",
+    description: "Сравнение Rust и Carbon",
+    date: '2025-10-28',
+    readTime: 3,
+    category: 'Telegram',
+    keywords: ["Telegram","TON","реклама","боты"],
+    content: ""
+  },
+{
+    id: 33,
+    title: "Стоит ли заниматься вайб-кодингом для разработки игр",
+    description: "Стоит ли заниматься вайб-кодингом для разработки игр",
+    date: '2025-10-28',
+    readTime: 3,
+    category: 'Telegram',
+    keywords: ["Telegram","TON","реклама","боты"],
+    content: ""
+  },
+{
     id: 28,
     title: "Сравнение Rust и Carbon",
     description: "Сравнение Rust и Carbon",
