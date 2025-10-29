@@ -2,120 +2,109 @@ import React from 'react'
 import type { Metadata } from 'next'
 
 export const metadata: Metadata = {
-  title: 'Политика использования cookie - T&M Agency',
+  title: 'Политика использования файлов cookie - T&M Agency',
   description: 'Политика использования файлов cookie на сайте T&M Agency',
 }
 
-export default function CookiePolicy() {
+export default function CookiesPage() {
   return (
-    <main className="min-h-screen bg-[#0A0A0A] text-white pt-20">
-      <div className="container mx-auto px-4 py-16">
+    <main className="min-h-screen bg-gradient-to-b from-[#0A0A0A] to-[#17212B] text-white pt-32">
+      <div className="container mx-auto px-4">
         <div className="max-w-4xl mx-auto">
-          <h1 className="heading-1 mb-8">
-            Политика использования cookie
-          </h1>
+          <h1 className="text-4xl font-bold mb-8">Политика использования файлов cookie</h1>
           
-          <div className="space-y-8 body-medium text-muted">
+          <div className="prose prose-lg prose-invert max-w-none space-y-6">
             <section>
-              <h2 className="heading-3 mb-4 text-white">Что такое cookie?</h2>
-              <p>
-                Cookie — это небольшие текстовые файлы, которые сохраняются на вашем устройстве 
-                при посещении веб-сайтов. Они помогают сайтам запоминать информацию о ваших 
-                предпочтениях и улучшать пользовательский опыт.
+              <h2 className="text-2xl font-bold mb-4">Что такое файлы cookie</h2>
+              <p className="text-gray-300 leading-relaxed">
+                Файлы cookie — это небольшие текстовые файлы, которые сохраняются на вашем устройстве 
+                при посещении веб-сайтов. Они помогают сайтам запоминать информацию о ваших предпочтениях 
+                и настройках для улучшения пользовательского опыта.
               </p>
             </section>
 
             <section>
-              <h2 className="heading-3 mb-4 text-white">Как мы используем cookie?</h2>
-              <p>
-                Мы используем файлы cookie для следующих целей:
+              <h2 className="text-2xl font-bold mb-4">Как мы используем cookie</h2>
+              <p className="text-gray-300 leading-relaxed mb-4">
+                На нашем сайте мы используем файлы cookie для:
               </p>
-              <ul className="list-disc list-inside mt-4 space-y-2">
-                <li>Улучшения работы сайта и его функциональности</li>
-                <li>Анализа сетевого трафика и поведения пользователей</li>
-                <li>Запоминания ваших предпочтений и настроек</li>
-                <li>Обеспечения безопасности сайта</li>
+              <ul className="list-disc list-inside text-gray-300 space-y-2">
+                <li>Запоминания вашего согласия на использование cookie</li>
+                <li>Анализа посещаемости сайта и поведения пользователей</li>
+                <li>Улучшения функциональности и производительности сайта</li>
                 <li>Персонализации контента и рекламы</li>
               </ul>
             </section>
 
             <section>
-              <h2 className="heading-3 mb-4 text-white">Типы cookie</h2>
+              <h2 className="text-2xl font-bold mb-4">Типы используемых cookie</h2>
               <div className="space-y-4">
                 <div>
-                  <h3 className="heading-4 mb-2 text-white">Необходимые cookie</h3>
-                  <p>
-                    Эти cookie необходимы для базовой работы сайта и не могут быть отключены. 
-                    Они обеспечивают безопасность и основные функции сайта.
+                  <h3 className="text-xl font-semibold mb-2 text-[#2AABEE]">Необходимые cookie</h3>
+                  <p className="text-gray-300">
+                    Эти файлы cookie необходимы для работы сайта и не могут быть отключены. 
+                    Они обеспечивают базовую функциональность и безопасность сайта.
                   </p>
                 </div>
                 <div>
-                  <h3 className="heading-4 mb-2 text-white">Аналитические cookie</h3>
-                  <p>
+                  <h3 className="text-xl font-semibold mb-2 text-[#2AABEE]">Аналитические cookie</h3>
+                  <p className="text-gray-300">
                     Помогают нам понять, как посетители взаимодействуют с сайтом, 
                     собирая и передавая информацию анонимно.
                   </p>
                 </div>
                 <div>
-                  <h3 className="heading-4 mb-2 text-white">Функциональные cookie</h3>
-                  <p>
+                  <h3 className="text-xl font-semibold mb-2 text-[#2AABEE]">Функциональные cookie</h3>
+                  <p className="text-gray-300">
                     Позволяют сайту запоминать сделанные вами выборы и предоставлять 
-                    улучшенные, более персонализированные функции.
+                    улучшенные, более личные функции.
                   </p>
                 </div>
               </div>
             </section>
 
             <section>
-              <h2 className="heading-3 mb-4 text-white">Управление cookie</h2>
-              <p>
-                Вы можете управлять cookie через настройки вашего браузера. Большинство 
-                браузеров позволяют:
+              <h2 className="text-2xl font-bold mb-4">Управление cookie</h2>
+              <p className="text-gray-300 leading-relaxed mb-4">
+                Вы можете управлять файлами cookie через настройки вашего браузера. 
+                Большинство браузеров позволяют:
               </p>
-              <ul className="list-disc list-inside mt-4 space-y-2">
+              <ul className="list-disc list-inside text-gray-300 space-y-2">
                 <li>Просматривать, какие cookie сохранены на вашем устройстве</li>
                 <li>Удалять отдельные cookie или все cookie сразу</li>
                 <li>Блокировать cookie от определенных сайтов</li>
-                <li>Блокировать cookie третьих лиц</li>
+                <li>Блокировать сторонние cookie</li>
                 <li>Очищать все cookie при закрытии браузера</li>
               </ul>
             </section>
 
             <section>
-              <h2 className="heading-3 mb-4 text-white">Cookie третьих лиц</h2>
-              <p>
-                Наш сайт может содержать cookie от сторонних сервисов, таких как:
+              <h2 className="text-2xl font-bold mb-4">Сторонние сервисы</h2>
+              <p className="text-gray-300 leading-relaxed">
+                Наш сайт может использовать сторонние сервисы (например, Google Analytics, 
+                Яндекс.Метрика), которые также могут устанавливать свои файлы cookie. 
+                Мы не контролируем использование cookie этими сторонними сервисами.
               </p>
-              <ul className="list-disc list-inside mt-4 space-y-2">
-                <li>Google Analytics — для анализа трафика</li>
-                <li>Социальные сети — для интеграции с платформами</li>
-                <li>Рекламные сети — для показа релевантной рекламы</li>
-              </ul>
             </section>
 
             <section>
-              <h2 className="heading-3 mb-4 text-white">Изменения в политике</h2>
-              <p>
+              <h2 className="text-2xl font-bold mb-4">Изменения в политике</h2>
+              <p className="text-gray-300 leading-relaxed">
                 Мы можем обновлять эту политику использования cookie время от времени. 
-                Любые изменения будут опубликованы на этой странице с указанием даты 
-                последнего обновления.
+                Любые изменения будут опубликованы на этой странице с указанием даты последнего обновления.
               </p>
             </section>
 
             <section>
-              <h2 className="heading-3 mb-4 text-white">Контакты</h2>
-              <p>
-                Если у вас есть вопросы относительно использования cookie, 
-                пожалуйста, свяжитесь с нами через{' '}
-                <a href="/contacts" className="text-accent hover:underline">
-                  страницу контактов
-                </a>
-                .
+              <h2 className="text-2xl font-bold mb-4">Контакты</h2>
+              <p className="text-gray-300 leading-relaxed">
+                Если у вас есть вопросы относительно использования файлов cookie, 
+                пожалуйста, свяжитесь с нами через форму обратной связи или по email.
               </p>
             </section>
 
-            <div className="pt-8 border-t border-white/10">
-              <p className="body-small text-white/50">
+            <div className="mt-8 p-4 bg-[#232E3C]/50 rounded-lg border border-[#2AABEE]/20">
+              <p className="text-sm text-gray-400">
                 Последнее обновление: {new Date().toLocaleDateString('ru-RU')}
               </p>
             </div>

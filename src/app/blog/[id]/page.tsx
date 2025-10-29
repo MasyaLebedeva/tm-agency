@@ -71,7 +71,17 @@ export default function BlogPost({ params }: { params: { id: string } }) {
           {/* Article Content */}
           <article className="prose prose-lg prose-invert max-w-none">
             {(() => {
-              const html = (post.content || '').trim()
+              // Берём HTML контент и убираем дубли заголовка из текста статьи
+              const raw = (post.content || '').trim()
+              const titleEsc = post.title.replace(/[.*+?^${}()|[\]\\]/g, '\\$&')
+              const removeTitleOnce = (s: string) => s
+                .replace(new RegExp(`<h1[^>]*>\\s*${titleEsc}\\s*</h1>`, 'gi'), '')
+                .replace(new RegExp(`<p[^>]*>\\s*${titleEsc}\\s*</p>`, 'gi'), '')
+                .replace(new RegExp(`(^|\\n)\\s*${titleEsc}\\s*(?=\\n|$)`, 'g'), '')
+              let html = removeTitleOnce(raw)
+              // Повторно на случай двойного дублирования
+              html = removeTitleOnce(html).trim()
+
               const hasContent = html.length > 80
               const fallback = `
                 <h2>${post.title}</h2>

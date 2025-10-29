@@ -1,40 +1,36 @@
-import React from 'react'
+'use client'
+
+import React, { useState } from 'react'
 import Link from 'next/link'
 import { notFound } from 'next/navigation'
-import type { Metadata } from 'next'
 import { casesData } from '../cases-data'
-
-export async function generateMetadata({ params }: { params: { id: string } }): Promise<Metadata> {
-  const caseItem = casesData.find(c => c.id === parseInt(params.id))
-  
-  if (!caseItem) {
-    return {
-      title: 'Кейс не найден - T&M Agency',
-    }
-  }
-
-  return {
-    title: `${caseItem.title} - Кейс T&M Agency`,
-    description: caseItem.description,
-    keywords: `кейс telegram, ${caseItem.category.toLowerCase()}, продвижение telegram, маркетинг telegram`,
-    openGraph: {
-      title: caseItem.title,
-      description: caseItem.description,
-      url: `https://tm-agency.ru/cases/${caseItem.id}`,
-      type: 'article',
-    },
-  }
-}
+import ContactModal from '@/components/ContactModal'
 
 export default function CaseDetail({ params }: { params: { id: string } }) {
-  const caseItem = casesData.find(c => c.id === parseInt(params.id))
+  const [isModalOpen, setIsModalOpen] = useState(false)
+  const caseId = parseInt(params.id)
+  const caseItem = casesData.find(c => c.id === caseId)
   
   if (!caseItem) {
-    notFound()
+    return (
+      <main className="min-h-screen bg-gradient-to-b from-[#0A0A0A] to-[#17212B] text-white pt-32">
+        <div className="container mx-auto px-4 text-center">
+          <h1 className="text-3xl font-bold mb-4 text-red-400">Кейс не найден</h1>
+          <p className="text-gray-300 mb-8">Кейс с ID {caseId} не существует</p>
+          <Link 
+            href="/cases"
+            className="bg-gradient-to-r from-[#2AABEE] to-[#229ED9] text-white px-6 py-3 rounded-lg hover:opacity-90 transition-opacity"
+          >
+            Вернуться к кейсам
+          </Link>
+        </div>
+      </main>
+    )
   }
 
   return (
     <main className="min-h-screen bg-gradient-to-b from-[#0A0A0A] to-[#17212B] text-white pt-32">
+      <ContactModal isOpen={isModalOpen} onClose={() => setIsModalOpen(false)} />
       <div className="container mx-auto px-4">
         <div className="max-w-4xl mx-auto">
           {/* Breadcrumb */}
@@ -93,13 +89,12 @@ export default function CaseDetail({ params }: { params: { id: string } }) {
                 Мы поможем вам создать эффективную систему продвижения в Telegram
               </p>
               {/* Кнопка должна открывать модалку. На детальной странице нет состояния, поэтому используем data-атрибут и ловим его в Navbar/глобально при необходимости. Пока заменим на переход к /contacts как резерв. */}
-              <Link 
-                href="#contact"
+              <button 
+                onClick={() => setIsModalOpen(true)}
                 className="inline-flex items-center bg-gradient-to-r from-[#2AABEE] to-[#229ED9] text-white px-8 py-4 rounded-full font-semibold hover:opacity-90 transition-all duration-300 transform hover:scale-105"
-                onClick={(e) => { e.preventDefault(); const btn = document.querySelector('[data-open-contact-modal="true"]') as HTMLButtonElement | null; btn?.click(); }}
               >
                 Получить консультацию
-              </Link>
+              </button>
             </div>
           </div>
 

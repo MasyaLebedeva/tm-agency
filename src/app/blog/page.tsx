@@ -32,9 +32,10 @@ export default function Blog() {
         <div className="max-w-4xl mx-auto">
           <div className="grid grid-cols-1 gap-8 mb-16">
             {unique.map((post, index) => (
-              <div 
+              <Link 
                 key={index}
-                className="group relative overflow-hidden rounded-2xl bg-[#232E3C]/50 backdrop-blur-sm border border-[#2AABEE]/20 hover:border-[#2AABEE]/40 transition-all duration-300 hover-lift animate-fade-in-up"
+                href={`/blog/${post.id}`}
+                className="group relative overflow-hidden rounded-2xl bg-[#232E3C]/50 backdrop-blur-sm border border-[#2AABEE]/20 hover:border-[#2AABEE]/40 transition-all duration-300 hover-lift animate-fade-in-up block"
                 style={{animationDelay: `${index * 0.1}s`}}
               >
                 <div className="p-8">
@@ -54,17 +55,14 @@ export default function Blog() {
                     {post.description}
                   </p>
                   
-                  <Link 
-                    href={`/blog/${post.id}`}
-                    className="inline-flex items-center text-[#2AABEE] hover:text-[#229ED9] transition-colors font-semibold"
-                  >
+                  <div className="inline-flex items-center text-[#2AABEE] hover:text-[#229ED9] transition-colors font-semibold">
                     Читать далее
                     <svg className="w-4 h-4 ml-2" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                       <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M9 5l7 7-7 7" />
                     </svg>
-                  </Link>
+                  </div>
                 </div>
-              </div>
+              </Link>
             ))}
           </div>
           

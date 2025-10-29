@@ -101,13 +101,26 @@ export async function GET() {
   const cleaned: string[] = []
   for (const p of parsed) {
     const key = `${p.title || ''}__${p.date || ''}`
-    const html = (p.content || '').trim()
+    // Удаляем повторы заголовка внутри контента
+    const rawHtml = (p.content || '').trim()
+    const titleEsc = (p.title || '').replace(/[.*+?^${}()|[\]\\]/g, '\\$&')
+    const removeTitleOnce = (s: string) => s
+      .replace(new RegExp(`<h1[^>]*>\\s*${titleEsc}\\s*</h1>`, 'gi'), '')
+      .replace(new RegExp(`<h2[^>]*>\\s*${titleEsc}\\s*</h2>`, 'gi'), '')
+      .replace(new RegExp(`<p[^>]*>\\s*${titleEsc}\\s*</p>`, 'gi'), '')
+      .replace(new RegExp(`(^|\\n)\\s*${titleEsc}\\s*(?=\\n|$)`, 'g'), '')
+    let html = removeTitleOnce(rawHtml)
+    html = removeTitleOnce(html).trim()
     if (html.length < 80) continue
     if (seen.has(key)) continue
     seen.add(key)
     // Обновляем readTime в сыром куске
     const newRt = normalizeReadTime(html)
     let updated = p.raw
+    // Обновляем содержимое контента
+    updated = updated.replace(/content:\s*`([\s\S]*?)`/, (m, g1) => {
+      return `content: ` + '`' + html + '`'
+    })
     if (/readTime:\s*[^,]+/.test(updated)) {
       updated = updated.replace(/readTime:\s*[^,]+/, `readTime: '${newRt}'`)
     } else {

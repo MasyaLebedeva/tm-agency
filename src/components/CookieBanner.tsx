@@ -9,19 +9,37 @@ export default function CookieBanner() {
 
   useEffect(() => {
     setIsMounted(true)
-    // Проверяем, принял ли пользователь cookies
-    const cookiesAccepted = localStorage.getItem('cookiesAccepted')
+    
+    // Проверяем реальные cookies
+    const getCookie = (name: string) => {
+      const value = `; ${document.cookie}`
+      const parts = value.split(`; ${name}=`)
+      if (parts.length === 2) return parts.pop()?.split(';').shift()
+      return null
+    }
+    
+    const cookiesAccepted = getCookie('cookiesAccepted') || localStorage.getItem('cookiesAccepted')
     if (!cookiesAccepted) {
       setIsVisible(true)
     }
   }, [])
 
   const acceptCookies = () => {
+    // Устанавливаем реальный cookie на 1 год
+    const expires = new Date()
+    expires.setFullYear(expires.getFullYear() + 1)
+    document.cookie = `cookiesAccepted=true; expires=${expires.toUTCString()}; path=/; SameSite=Lax`
+    
     localStorage.setItem('cookiesAccepted', 'true')
     setIsVisible(false)
   }
 
   const declineCookies = () => {
+    // Устанавливаем cookie об отказе на 1 год
+    const expires = new Date()
+    expires.setFullYear(expires.getFullYear() + 1)
+    document.cookie = `cookiesAccepted=false; expires=${expires.toUTCString()}; path=/; SameSite=Lax`
+    
     localStorage.setItem('cookiesAccepted', 'false')
     setIsVisible(false)
   }
@@ -37,7 +55,7 @@ export default function CookieBanner() {
             <p className="body-medium text-white">
               Мы используем файлы cookie для улучшения работы сайта и анализа сетевого трафика. 
               Продолжая пользоваться сайтом, вы соглашаетесь с{' '}
-              <Link href="/cookies" className="text-accent hover:underline">
+              <Link href="/cookies" className="text-[#2AABEE] hover:underline">
                 политикой использования cookie
               </Link>
               .
