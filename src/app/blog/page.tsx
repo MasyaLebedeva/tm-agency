@@ -34,7 +34,7 @@ export default function Blog() {
             {unique.map((post, index) => (
               <Link 
                 key={index}
-                href={`/blog/${post.id}`}
+                href={`/blog/${post.slug}`}
                 className="group relative overflow-hidden rounded-2xl bg-[#232E3C]/50 backdrop-blur-sm border border-[#2AABEE]/20 hover:border-[#2AABEE]/40 transition-all duration-300 hover-lift animate-fade-in-up block"
                 style={{animationDelay: `${index * 0.1}s`}}
               >

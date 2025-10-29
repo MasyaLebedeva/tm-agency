@@ -4,8 +4,8 @@ import { notFound } from 'next/navigation'
 import type { Metadata } from 'next'
 import { blogPosts } from '../blog-data'
 
-export async function generateMetadata({ params }: { params: { id: string } }): Promise<Metadata> {
-  const post = blogPosts.find(p => p.id === parseInt(params.id))
+export async function generateMetadata({ params }: { params: { slug: string } }): Promise<Metadata> {
+  const post = blogPosts.find(p => p.slug === params.slug)
   
   if (!post) {
     return {
@@ -20,14 +20,14 @@ export async function generateMetadata({ params }: { params: { id: string } }): 
     openGraph: {
       title: post.title,
       description: post.description,
-      url: `https://tm-agency.ru/blog/${post.id}`,
+      url: `https://tmads.ru/blog/${post.slug}`,
       type: 'article',
     },
   }
 }
 
-export default function BlogPost({ params }: { params: { id: string } }) {
-  const post = blogPosts.find(p => p.id === parseInt(params.id))
+export default function BlogPost({ params }: { params: { slug: string } }) {
+  const post = blogPosts.find(p => p.slug === params.slug)
   
   if (!post) {
     notFound()
