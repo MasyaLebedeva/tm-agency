@@ -79,7 +79,10 @@ export default function BlogPost({ params }: { params: { slug: string } }) {
               <span>/</span>
               <Link href="/blog" className="hover:text-[#2AABEE] transition-colors">Блог</Link>
               <span>/</span>
-              <span className="text-white">{post.title}</span>
+              {(() => {
+                const displayTitle = post.title.replace(/^\[Перевод\]\s*/i, '')
+                return <span className="text-white">{displayTitle}</span>
+              })()}
             </div>
           </nav>
 
@@ -104,12 +107,16 @@ export default function BlogPost({ params }: { params: { slug: string } }) {
             })()}
             
             {(() => {
+              const displayTitle = post.title.replace(/^\[Перевод\]\s*/i, '')
               const displayDescription = (post.description || '').replace(/^\[Перевод\]\s*/i, '')
-              return (
-                <p className="text-xl text-gray-300 leading-relaxed">
-                  {displayDescription}
-                </p>
-              )
+              if (displayDescription.trim() && displayDescription.trim() !== displayTitle.trim()) {
+                return (
+                  <p className="text-xl text-gray-300 leading-relaxed">
+                    {displayDescription}
+                  </p>
+                )
+              }
+              return null
             })()}
           </header>
 
@@ -129,9 +136,9 @@ export default function BlogPost({ params }: { params: { slug: string } }) {
               html = removeTitleOnce(html).trim()
 
               const hasContent = html.length > 80
+              const cleanDesc = (post.description || '').replace(/^\[Перевод\]\s*/i, '')
               const fallback = `
-                <h2>${post.title}</h2>
-                <p>${post.description || 'Статья будет дополнена в ближайшее время. Мы уже готовим подробный материал по теме.'}</p>
+                <p>${cleanDesc || 'Статья будет дополнена в ближайшее время. Мы уже готовим подробный материал по теме.'}</p>
                 <h3>Ключевые тезисы</h3>
                 <ul>
                   <li>Актуальность темы для продвижения в Telegram</li>
@@ -139,7 +146,7 @@ export default function BlogPost({ params }: { params: { slug: string } }) {
                   <li>Инструменты и метрики, на которые стоит опираться</li>
                 </ul>
                 <h3>Что дальше</h3>
-                <p>Если вам нужна консультация по теме «${post.title}», оставьте заявку — подскажем, как применить это к вашему проекту.</p>
+                <p>Если вам нужна консультация по теме «${displayTitle}», оставьте заявку — подскажем, как применить это к вашему проекту.</p>
               `
               const contentHtml = hasContent ? html : fallback
               return (
