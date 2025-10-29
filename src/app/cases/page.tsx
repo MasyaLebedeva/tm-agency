@@ -1,6 +1,6 @@
 'use client'
 
-import React, { useState, useEffect } from 'react'
+import React, { useState } from 'react'
 import Link from 'next/link'
 import Image from 'next/image'
 import { casesData } from './cases-data'
@@ -8,52 +8,7 @@ import ContactModal from '@/components/ContactModal'
 
 export default function Cases() {
   const [isModalOpen, setIsModalOpen] = useState(false)
-  const [cases, setCases] = useState(casesData)
-  const [isLoading, setIsLoading] = useState(true)
-  const [error, setError] = useState<string | null>(null)
-
-  useEffect(() => {
-    try {
-      // Имитируем загрузку данных (в реальности может быть API запрос)
-      const timer = setTimeout(() => {
-        setCases(casesData)
-        setIsLoading(false)
-      }, 100)
-      
-      return () => clearTimeout(timer)
-    } catch (err) {
-      setError('Ошибка загрузки кейсов')
-      setIsLoading(false)
-    }
-  }, [])
-
-  if (error) {
-    return (
-      <main className="min-h-screen bg-gradient-to-b from-[#0A0A0A] to-[#17212B] text-white py-32">
-        <div className="container mx-auto px-4 text-center">
-          <h1 className="text-3xl font-bold mb-4 text-red-400">Ошибка загрузки</h1>
-          <p className="text-gray-300 mb-8">{error}</p>
-          <button 
-            onClick={() => window.location.reload()}
-            className="bg-gradient-to-r from-[#2AABEE] to-[#229ED9] text-white px-6 py-3 rounded-lg hover:opacity-90 transition-opacity"
-          >
-            Попробовать снова
-          </button>
-        </div>
-      </main>
-    )
-  }
-
-  if (isLoading) {
-    return (
-      <main className="min-h-screen bg-gradient-to-b from-[#0A0A0A] to-[#17212B] text-white py-32">
-        <div className="container mx-auto px-4 text-center">
-          <div className="animate-spin rounded-full h-12 w-12 border-b-2 border-[#2AABEE] mx-auto mb-4"></div>
-          <p className="text-gray-300">Загружаем кейсы...</p>
-        </div>
-      </main>
-    )
-  }
+  const cases = casesData
 
   return (
     <main className="min-h-screen bg-gradient-to-b from-[#0A0A0A] to-[#17212B] text-white py-32">
