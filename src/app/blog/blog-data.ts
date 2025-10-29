@@ -10,6 +10,39 @@ function createSlug(title: string): string {
 
 export const blogPosts = [
 {
+    id: 22,
+    slug: '8000-40-22',
+    title: "Сура ПК8000. Компьютер и жизнь сообщества разработчиков спустя почти 40 лет",
+    description: "Сура ПК8000. Компьютер и жизнь сообщества разработчиков спустя почти 40 лет",
+    date: '2025-10-29',
+    readTime: '3 мин',
+    category: 'Telegram',
+    keywords: ["Telegram","TON","реклама","боты"],
+    content: ``
+  },
+{
+    id: 23,
+    slug: '70-50-microsoft-it-23',
+    title: "70 лет Биллу Гейтсу и 50 лет Microsoft: уроки лидерства, изменившего IT-индустрию",
+    description: "70 лет Биллу Гейтсу и 50 лет Microsoft: уроки лидерства, изменившего IT-индустрию",
+    date: '2025-10-29',
+    readTime: '3 мин',
+    category: 'Telegram',
+    keywords: ["Telegram","TON","реклама","боты"],
+    content: ``
+  },
+{
+    id: 24,
+    slug: '0-click-account-takeover-punycode-idn-24',
+    title: "[Перевод] Самый недооценённый 0-Click Account Takeover с использованием Punycode IDN",
+    description: "[Перевод] Самый недооценённый 0-Click Account Takeover с использованием Punycode IDN",
+    date: '2025-10-29',
+    readTime: '3 мин',
+    category: 'Telegram',
+    keywords: ["Telegram","TON","реклама","боты"],
+    content: ``
+  },
+{
     id: 19,
     slug: '8000-40-19',
     title: "Сура ПК8000. Компьютер и жизнь сообщества разработчиков спустя почти 40 лет",
