@@ -7,7 +7,7 @@ export default function robots(): MetadataRoute.Robots {
       allow: '/',
       disallow: '/private/',
     },
-    sitemap: 'https://tm-agency.ru/sitemap.xml',
+    sitemap: 'https://tmads.ru/sitemap.xml',
   }
 }
 

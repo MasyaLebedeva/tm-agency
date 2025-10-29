@@ -1,9 +1,11 @@
 import { MetadataRoute } from 'next'
+import { blogPosts } from './blog/blog-data'
+import { casesData } from './cases/cases-data'
 
 export default function sitemap(): MetadataRoute.Sitemap {
-  const baseUrl = 'https://tm-agency.ru'
+  const baseUrl = 'https://tmads.ru'
   
-  return [
+  const staticPages: MetadataRoute.Sitemap = [
     {
       url: baseUrl,
       lastModified: new Date(),
@@ -35,30 +37,28 @@ export default function sitemap(): MetadataRoute.Sitemap {
       priority: 0.8,
     },
     {
-      url: `${baseUrl}/blog/1`,
-      lastModified: new Date(),
-      changeFrequency: 'monthly',
-      priority: 0.6,
-    },
-    {
-      url: `${baseUrl}/blog/2`,
-      lastModified: new Date(),
-      changeFrequency: 'monthly',
-      priority: 0.6,
-    },
-    {
-      url: `${baseUrl}/blog/3`,
-      lastModified: new Date(),
-      changeFrequency: 'monthly',
-      priority: 0.6,
-    },
-    {
       url: `${baseUrl}/contacts`,
       lastModified: new Date(),
       changeFrequency: 'yearly',
       priority: 0.5,
     },
   ]
+
+  const blogPages: MetadataRoute.Sitemap = blogPosts.map(p => ({
+    url: `${baseUrl}/blog/${p.slug}`,
+    lastModified: new Date(),
+    changeFrequency: 'monthly',
+    priority: 0.6,
+  }))
+
+  const casePages: MetadataRoute.Sitemap = casesData.map(c => ({
+    url: `${baseUrl}/cases/${c.id}`,
+    lastModified: new Date(),
+    changeFrequency: 'yearly',
+    priority: 0.5,
+  }))
+
+  return [...staticPages, ...blogPages, ...casePages]
 }
 
 

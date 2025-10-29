@@ -10,6 +10,20 @@ export default function About() {
   return (
     <main className="min-h-screen bg-gradient-to-b from-[#0A0A0A] to-[#17212B] text-white pt-32">
       <ContactModal isOpen={isModalOpen} onClose={() => setIsModalOpen(false)} />
+      {/* JSON-LD: Breadcrumbs */}
+      <script
+        type="application/ld+json"
+        dangerouslySetInnerHTML={{
+          __html: JSON.stringify({
+            '@context': 'https://schema.org',
+            '@type': 'BreadcrumbList',
+            itemListElement: [
+              { '@type': 'ListItem', position: 1, name: 'Главная', item: 'https://tmads.ru/' },
+              { '@type': 'ListItem', position: 2, name: 'О нас', item: 'https://tmads.ru/about' },
+            ],
+          }),
+        }}
+      />
       <div className="container mx-auto px-4">
         <h1 className="text-5xl font-bold text-center mb-16 bg-clip-text text-transparent bg-gradient-to-r from-[#2AABEE] to-[#229ED9]">
           О нас

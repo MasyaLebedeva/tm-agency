@@ -17,6 +17,9 @@ export async function generateMetadata({ params }: { params: { slug: string } })
     title: `${post.title} - T&M Agency`,
     description: post.description,
     keywords: post.keywords,
+    alternates: {
+      canonical: `https://tmads.ru/blog/${post.slug}`,
+    },
     openGraph: {
       title: post.title,
       description: post.description,
@@ -37,6 +40,38 @@ export default function BlogPost({ params }: { params: { slug: string } }) {
     <main className="min-h-screen bg-gradient-to-b from-[#0A0A0A] to-[#17212B] text-white pt-32">
       <div className="container mx-auto px-4">
         <div className="max-w-4xl mx-auto">
+          {/* JSON-LD: Breadcrumbs + BlogPosting */}
+          <script
+            type="application/ld+json"
+            dangerouslySetInnerHTML={{
+              __html: JSON.stringify({
+                '@context': 'https://schema.org',
+                '@type': 'BreadcrumbList',
+                itemListElement: [
+                  { '@type': 'ListItem', position: 1, name: 'Главная', item: 'https://tmads.ru/' },
+                  { '@type': 'ListItem', position: 2, name: 'Блог', item: 'https://tmads.ru/blog' },
+                  { '@type': 'ListItem', position: 3, name: post.title, item: `https://tmads.ru/blog/${post.slug}` },
+                ],
+              }),
+            }}
+          />
+          <script
+            type="application/ld+json"
+            dangerouslySetInnerHTML={{
+              __html: JSON.stringify({
+                '@context': 'https://schema.org',
+                '@type': 'BlogPosting',
+                headline: post.title,
+                description: post.description,
+                mainEntityOfPage: `https://tmads.ru/blog/${post.slug}`,
+                author: { '@type': 'Organization', name: 'T&M Agency' },
+                publisher: { '@type': 'Organization', name: 'T&M Agency', logo: { '@type': 'ImageObject', url: 'https://tmads.ru/favicon.svg' } },
+                datePublished: post.date,
+                articleSection: post.category,
+                inLanguage: 'ru-RU',
+              }),
+            }}
+          />
           {/* Breadcrumb */}
           <nav className="mb-8">
             <div className="flex items-center space-x-2 text-gray-400">
@@ -115,7 +150,7 @@ export default function BlogPost({ params }: { params: { slug: string } }) {
                 .map((relatedPost) => (
                   <Link 
                     key={relatedPost.id}
-                    href={`/blog/${relatedPost.id}`}
+                    href={`/blog/${relatedPost.slug}`}
                     className="group block p-6 bg-[#232E3C]/50 rounded-2xl border border-[#2AABEE]/20 hover:border-[#2AABEE]/40 transition-all duration-300 hover-lift"
                   >
                     <div className="flex items-center justify-between mb-3">
