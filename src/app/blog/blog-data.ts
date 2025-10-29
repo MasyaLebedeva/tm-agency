@@ -10,6 +10,36 @@ function createSlug(title: string): string {
 
 export const blogPosts = [
 {
+    id: 22,
+    title: "Один сервер, вся сеть: руководство по RADIUS для новичков",
+    description: "Один сервер, вся сеть: руководство по RADIUS для новичков",
+    date: '2025-10-29',
+    readTime: '3 мин',
+    category: 'Telegram',
+    keywords: ["Telegram","TON","реклама","боты"],
+    content: ""
+  },
+{
+    id: 23,
+    title: "Пока зумеры пьют смузи, миллениалы фигачат и выгорают — да, но нет",
+    description: "Пока зумеры пьют смузи, миллениалы фигачат и выгорают — да, но нет",
+    date: '2025-10-29',
+    readTime: '3 мин',
+    category: 'Telegram',
+    keywords: ["Telegram","TON","реклама","боты"],
+    content: ""
+  },
+{
+    id: 24,
+    title: "Уровни изоляции транзакций: практическая механика и сравнение PostgreSQL, MySQL, Oracle, SQL Server и DB2",
+    description: "Уровни изоляции транзакций: практическая механика и сравнение PostgreSQL, MySQL, Oracle, SQL Server и DB2",
+    date: '2025-10-29',
+    readTime: '3 мин',
+    category: 'Telegram',
+    keywords: ["Telegram","TON","реклама","боты"],
+    content: ""
+  },
+{
     id: 19,
     title: "Как музыканты издеваются над программистами",
     description: "Как музыканты издеваются над программистами",
