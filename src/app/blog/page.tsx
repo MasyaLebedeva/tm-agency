@@ -31,7 +31,10 @@ export default function Blog() {
 
         <div className="max-w-4xl mx-auto">
           <div className="grid grid-cols-1 gap-8 mb-16">
-            {unique.map((post, index) => (
+            {unique.map((post, index) => {
+              const displayTitle = post.title.replace(/^\[Перевод\]\s*/i, '')
+              const displayDescription = (post.description || '').replace(/^\[Перевод\]\s*/i, '')
+              return (
               <Link 
                 key={index}
                 href={`/blog/${post.slug}`}
@@ -48,11 +51,11 @@ export default function Blog() {
                   </div>
                   
                   <h2 className="text-2xl font-bold mb-4 group-hover:text-[#2AABEE] transition-colors">
-                    {post.title}
+                    {displayTitle}
                   </h2>
                   
                   <p className="text-gray-300 mb-6 leading-relaxed">
-                    {post.description}
+                    {displayDescription}
                   </p>
                   
                   <div className="inline-flex items-center text-[#2AABEE] hover:text-[#229ED9] transition-colors font-semibold">
@@ -63,7 +66,7 @@ export default function Blog() {
                   </div>
                 </div>
               </Link>
-            ))}
+            )})}
           </div>
           
           <div className="text-center mt-16">

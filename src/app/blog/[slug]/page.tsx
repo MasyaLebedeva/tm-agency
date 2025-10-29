@@ -94,13 +94,23 @@ export default function BlogPost({ params }: { params: { slug: string } }) {
               <span className="text-gray-400">{typeof post.readTime === 'number' ? `${post.readTime} мин` : (post.readTime || '—')} чтения</span>
             </div>
             
-            <h1 className="text-4xl sm:text-5xl md:text-6xl font-bold mb-6 leading-tight">
-              {post.title}
-            </h1>
+            {(() => {
+              const displayTitle = post.title.replace(/^\[Перевод\]\s*/i, '')
+              return (
+                <h1 className="text-4xl sm:text-5xl md:text-6xl font-bold mb-6 leading-tight">
+                  {displayTitle}
+                </h1>
+              )
+            })()}
             
-            <p className="text-xl text-gray-300 leading-relaxed">
-              {post.description}
-            </p>
+            {(() => {
+              const displayDescription = (post.description || '').replace(/^\[Перевод\]\s*/i, '')
+              return (
+                <p className="text-xl text-gray-300 leading-relaxed">
+                  {displayDescription}
+                </p>
+              )
+            })()}
           </header>
 
           {/* Article Content */}
@@ -108,7 +118,8 @@ export default function BlogPost({ params }: { params: { slug: string } }) {
             {(() => {
               // Берём HTML контент и убираем дубли заголовка из текста статьи
               const raw = (post.content || '').trim()
-              const titleEsc = post.title.replace(/[.*+?^${}()|[\]\\]/g, '\\$&')
+              const displayTitle = post.title.replace(/^\[Перевод\]\s*/i, '')
+              const titleEsc = displayTitle.replace(/[.*+?^${}()|[\]\\]/g, '\\$&')
               const removeTitleOnce = (s: string) => s
                 .replace(new RegExp(`<h1[^>]*>\\s*${titleEsc}\\s*</h1>`, 'gi'), '')
                 .replace(new RegExp(`<p[^>]*>\\s*${titleEsc}\\s*</p>`, 'gi'), '')
