@@ -10,6 +10,36 @@ function createSlug(title: string): string {
 
 export const blogPosts = [
 {
+    id: 19,
+    title: "Токенизированные акции внутри Telegram — прорыв и реальный выход для российских инвесторов или ловушка для капитала?",
+    description: "Токенизированные акции внутри Telegram — прорыв и реальный выход для российских инвесторов или ловушка для капитала?",
+    date: '2025-10-29',
+    readTime: '3 мин',
+    category: 'Telegram',
+    keywords: ["Telegram","TON","реклама","боты"],
+    content: ""
+  },
+{
+    id: 20,
+    title: "Один сервер, вся сеть: руководство по RADIUS для новичков",
+    description: "Один сервер, вся сеть: руководство по RADIUS для новичков",
+    date: '2025-10-29',
+    readTime: '3 мин',
+    category: 'Telegram',
+    keywords: ["Telegram","TON","реклама","боты"],
+    content: ""
+  },
+{
+    id: 21,
+    title: "Пока зумеры пьют смузи, миллениалы фигачат и выгорают — да, но нет",
+    description: "Пока зумеры пьют смузи, миллениалы фигачат и выгорают — да, но нет",
+    date: '2025-10-29',
+    readTime: '3 мин',
+    category: 'Telegram',
+    keywords: ["Telegram","TON","реклама","боты"],
+    content: ""
+  },
+{
     id: 1,
     slug: createSlug('Как создать успешный Telegram-канал: полное руководство 2025'),
     title: 'Как создать успешный Telegram-канал: полное руководство 2025',
