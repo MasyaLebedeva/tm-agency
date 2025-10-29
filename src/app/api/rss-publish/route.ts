@@ -109,18 +109,31 @@ function insertPostsIntoSource(sourceTs: string, newPostsTs: string) {
   return `${before}\n${newPostsTs},${after}`
 }
 
+function createSlug(title: string, id: number): string {
+  const base = title
+    .toLowerCase()
+    .replace(/[^\w\s-]/g, '')
+    .replace(/\s+/g, '-')
+    .replace(/-+/g, '-')
+    .replace(/^-+|-+$/g, '')
+  return `${base}-${id}`
+}
+
 function buildPostObject(id: number, title: string, content: string, keywords: string[]) {
   const date = new Date().toISOString().slice(0, 10)
   const readTime = Math.max(3, Math.min(12, Math.round(content.split(/\s+/).length / 180)))
+  const slug = createSlug(title, id)
+  const escaped = content.replace(/`/g, '\\`')
   return `{
     id: ${id},
+    slug: '${slug}',
     title: ${JSON.stringify(title)},
     description: ${JSON.stringify(title)},
     date: '${date}',
     readTime: '${readTime} мин',
     category: 'Telegram',
     keywords: ${JSON.stringify(keywords)},
-    content: ${JSON.stringify(content)}
+    content: \`${escaped}\`
   }`
 }
 
@@ -132,7 +145,7 @@ export async function GET() {
   const authorName = process.env.GITHUB_AUTHOR_NAME || 'T&M Bot'
   const authorEmail = process.env.GITHUB_AUTHOR_EMAIL || 'bot@tmads.ru'
 
-  if (!openaiKey || !ghToken || !repo) {
+  if (!ghToken || !repo) {
     return NextResponse.json({ error: 'Missing env vars' }, { status: 400 })
   }
 
@@ -161,12 +174,15 @@ export async function GET() {
   // Берём 3 статьи
   const picked = allItems.slice(0, 3)
 
-  // Генерация статей
+  // Генерация статей (если нет OPENAI — используем summary из RSS)
   const articles: Array<{ title: string; content: string }> = []
   for (let i = 0; i < picked.length; i++) {
     const t = topics[i % topics.length]
-    const content = await generateArticle(openaiKey, t, picked[i])
     const title = picked[i].title || `${t}: обзор и рекомендации`
+    const baseContent = picked[i].summary || `${t}: краткое резюме источника.`
+    const content = openaiKey
+      ? await generateArticle(openaiKey, t, picked[i])
+      : `<p>${baseContent}</p>`
     articles.push({ title, content })
   }
 
@@ -197,14 +213,14 @@ export async function GET() {
     repo,
     path,
     branch,
-    message: 'Автопубликация: 3 новых статьи (RSS→AI)',
+    message: `Автопубликация: ${articles.length} новых статей (RSS→${openaiKey ? 'AI' : 'summary'})`,
     content: updated,
     sha,
     authorName,
     authorEmail,
   })
 
-  return NextResponse.json({ ok: true, added: articles.length })
+  return NextResponse.json({ ok: true, added: articles.length, ai: !!openaiKey })
 }
 
 
