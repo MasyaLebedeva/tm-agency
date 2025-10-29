@@ -46,7 +46,7 @@ function normalizeReadTime(contentHtml: string): string {
   return `${minutes} мин`
 }
 
-export async function GET() {
+export async function GET(request: Request) {
   const ghToken = process.env.GITHUB_TOKEN || ''
   const repo = process.env.GITHUB_REPO || ''
   const branch = process.env.GITHUB_BRANCH || 'main'
@@ -79,61 +79,85 @@ export async function GET() {
     .map((c) => c.trim())
     .filter(Boolean)
 
-  type Post = { raw: string; id?: number; title?: string; date?: string; content?: string; readTime?: string }
+  type Post = { raw: string; id?: number; slug?: string; title?: string; date?: string; content?: string; readTime?: string }
   const parsed: Post[] = chunks.map((raw) => {
     const idMatch = raw.match(/id:\s*(\d+)/)
+    const slugMatch = raw.match(/slug:\s*(['\"])(.*?)\1/)
     const titleMatch = raw.match(/title:\s*("[\s\S]*?"|'[\s\S]*?')/)
     const dateMatch = raw.match(/date:\s*([^,]+)/)
-    const contentMatch = raw.match(/content:\s*`([\s\S]*?)`/)
+    // поддерживаем и шаблонные строки, и обычные кавычки
+    const contentMatch = raw.match(/content:\s*(?:`([\s\S]*?)`|"([\s\S]*?)"|'([\s\S]*?)')/)
     const rtMatch = raw.match(/readTime:\s*([^,]+)/)
     return {
       raw,
       id: idMatch ? parseInt(idMatch[1]) : undefined,
+      slug: slugMatch ? slugMatch[2] : undefined,
       title: titleMatch ? JSON.parse(titleMatch[1].replace(/'/g, '"')) : undefined,
       date: dateMatch ? dateMatch[1].trim().replace(/(^'|^"|"$|'$)/g, '') : undefined,
-      content: contentMatch ? contentMatch[1] : undefined,
+      content: contentMatch ? (contentMatch[1] || contentMatch[2] || contentMatch[3]) : undefined,
       readTime: rtMatch ? rtMatch[1].trim().replace(/(^'|^"|"$|'$)/g, '') : undefined,
     }
   })
 
-  // Фильтруем пустые/дубли (контент < 80 символов) и дубликаты title+date
-  const seen = new Set<string>()
+  // Недеструктивная нормализация: никого не удаляем, только добавляем slug и/или обновляем readTime
   const cleaned: string[] = []
+  let changedCount = 0
   for (const p of parsed) {
-    const key = `${p.title || ''}__${p.date || ''}`
-    // Удаляем повторы заголовка внутри контента
-    const rawHtml = (p.content || '').trim()
-    const titleEsc = (p.title || '').replace(/[.*+?^${}()|[\]\\]/g, '\\$&')
-    const removeTitleOnce = (s: string) => s
-      .replace(new RegExp(`<h1[^>]*>\\s*${titleEsc}\\s*</h1>`, 'gi'), '')
-      .replace(new RegExp(`<h2[^>]*>\\s*${titleEsc}\\s*</h2>`, 'gi'), '')
-      .replace(new RegExp(`<p[^>]*>\\s*${titleEsc}\\s*</p>`, 'gi'), '')
-      .replace(new RegExp(`(^|\\n)\\s*${titleEsc}\\s*(?=\\n|$)`, 'g'), '')
-    let html = removeTitleOnce(rawHtml)
-    html = removeTitleOnce(html).trim()
-    if (html.length < 80) continue
-    if (seen.has(key)) continue
-    seen.add(key)
-    // Обновляем readTime в сыром куске
-    const newRt = normalizeReadTime(html)
     let updated = p.raw
-    // Обновляем содержимое контента
-    updated = updated.replace(/content:\s*`([\s\S]*?)`/, (m, g1) => {
-      return `content: ` + '`' + html + '`'
-    })
-    if (/readTime:\s*[^,]+/.test(updated)) {
-      updated = updated.replace(/readTime:\s*[^,]+/, `readTime: '${newRt}'`)
-    } else {
-      updated = updated.replace(/date:\s*[^,]+,/, (m) => `${m}\n    readTime: '${newRt}',`)
+    // добавить slug при отсутствии
+    const createSlug = (t: string, id?: number) => t
+      .toLowerCase()
+      .replace(/[^\w\s-]/g, '')
+      .replace(/\s+/g, '-')
+      .replace(/-+/g, '-')
+      .replace(/^-+|-+$/g, '') + (id ? `-${id}` : '')
+    if (!/\bslug:\s*['\"]/i.test(updated)) {
+      const computed = createSlug(p.title || 'post', p.id)
+      const nu = updated.replace(/id:\s*\d+\s*,/, (m) => `${m}\n    slug: '${computed}',`)
+      if (nu !== updated) {
+        updated = nu
+        changedCount++
+      }
     }
-    cleaned.push(updated.endsWith('}') ? updated : updated + '}')
+    // обновить readTime, если есть контент
+    if (p.content && p.content.trim().length > 0) {
+      const newRt = normalizeReadTime(p.content)
+      if (/readTime:\s*[^,]+/.test(updated)) {
+        const nu = updated.replace(/readTime:\s*[^,]+/, `readTime: '${newRt}'`)
+        if (nu !== updated) {
+          updated = nu
+          changedCount++
+        }
+      } else {
+        const nu = updated.replace(/date:\s*[^,]+,/, (m) => `${m}\n    readTime: '${newRt}',`)
+        if (nu !== updated) {
+          updated = nu
+          changedCount++
+        }
+      }
+    }
+    cleaned.push(updated.endsWith('}') ? updated : updated + '}' )
   }
 
   const newBody = '\n' + cleaned.join(',\n') + '\n'
   const updatedFile = head + newBody + tail
 
-  if (updatedFile === current) {
-    return NextResponse.json({ ok: true, changed: 0 })
+  // DRY RUN через query ?dry=1 или env BLOG_CLEAN_DRY_RUN=1
+  const isDry = (() => {
+    try {
+      const url = new URL(request.url)
+      return url.searchParams.get('dry') === '1' || process.env.BLOG_CLEAN_DRY_RUN === '1'
+    } catch {
+      return process.env.BLOG_CLEAN_DRY_RUN === '1'
+    }
+  })()
+
+  if (updatedFile === current || changedCount === 0) {
+    return NextResponse.json({ ok: true, changed: 0, dryRun: isDry })
+  }
+
+  if (isDry) {
+    return NextResponse.json({ ok: true, changed: changedCount, dryRun: true })
   }
 
   await putFileToGithub({
@@ -141,14 +165,14 @@ export async function GET() {
     repo,
     path,
     branch,
-    message: 'Очистка блога: удалены дубли и пустые статьи, обновлено время чтения',
+    message: 'Нормализация блога: добавлены slug/readTime (без удалений)',
     content: updatedFile,
     sha,
     authorName,
     authorEmail,
   })
 
-  return NextResponse.json({ ok: true, removed: parsed.length - cleaned.length, kept: cleaned.length })
+  return NextResponse.json({ ok: true, changed: changedCount, dryRun: false })
 }
 
 
