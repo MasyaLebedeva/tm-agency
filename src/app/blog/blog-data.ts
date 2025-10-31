@@ -10,6 +10,39 @@ function createSlug(title: string): string {
 
 export const blogPosts = [
 {
+    id: 28,
+    slug: '-28',
+    title: "Этикет в рабочих чатах: как общаться, чтобы коллеги не отправили тебя в бан",
+    description: "Этикет в рабочих чатах: как общаться, чтобы коллеги не отправили тебя в бан",
+    date: '2025-10-31',
+    readTime: '3 мин',
+    category: 'Telegram',
+    keywords: ["Telegram","TON","реклама","боты"],
+    content: ``
+  },
+{
+    id: 29,
+    slug: '-29',
+    title: "Ученые выяснили, как стабилизируется обучение нейросетей при увеличении объема данных",
+    description: "Ученые выяснили, как стабилизируется обучение нейросетей при увеличении объема данных",
+    date: '2025-10-31',
+    readTime: '3 мин',
+    category: 'Telegram',
+    keywords: ["Telegram","TON","реклама","боты"],
+    content: ``
+  },
+{
+    id: 30,
+    slug: 'yclients-sms-number-lookup-30',
+    title: "Возвращаем неактивных клиентов из YClients по SMS с умной проверкой Number Lookup",
+    description: "Возвращаем неактивных клиентов из YClients по SMS с умной проверкой Number Lookup",
+    date: '2025-10-31',
+    readTime: '3 мин',
+    category: 'Telegram',
+    keywords: ["Telegram","TON","реклама","боты"],
+    content: ``
+  },
+{
     id: 25,
     slug: '-25',
     title: "Как протестировать криптосистему на замкнутость?",
