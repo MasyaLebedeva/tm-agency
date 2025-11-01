@@ -10,6 +10,72 @@ function createSlug(title: string): string {
 
 export const blogPosts = [
 {
+    id: 28,
+    slug: '-28',
+    title: "Этикет в рабочих чатах: как общаться, чтобы коллеги не отправили тебя в бан",
+    description: "Этикет в рабочих чатах: как общаться, чтобы коллеги не отправили тебя в бан",
+    date: '2025-10-31',
+    readTime: '3 мин',
+    category: 'Telegram',
+    keywords: ["Telegram","TON","реклама","боты"],
+    content: ``
+  },
+{
+    id: 29,
+    slug: '-29',
+    title: "Ученые выяснили, как стабилизируется обучение нейросетей при увеличении объема данных",
+    description: "Ученые выяснили, как стабилизируется обучение нейросетей при увеличении объема данных",
+    date: '2025-10-31',
+    readTime: '3 мин',
+    category: 'Telegram',
+    keywords: ["Telegram","TON","реклама","боты"],
+    content: ``
+  },
+{
+    id: 30,
+    slug: 'yclients-sms-number-lookup-30',
+    title: "Возвращаем неактивных клиентов из YClients по SMS с умной проверкой Number Lookup",
+    description: "Возвращаем неактивных клиентов из YClients по SMS с умной проверкой Number Lookup",
+    date: '2025-10-31',
+    readTime: '3 мин',
+    category: 'Telegram',
+    keywords: ["Telegram","TON","реклама","боты"],
+    content: ``
+  },
+{
+    id: 25,
+    slug: '-25',
+    title: "Как протестировать криптосистему на замкнутость?",
+    description: "Как протестировать криптосистему на замкнутость?",
+    date: '2025-10-30',
+    readTime: '3 мин',
+    category: 'Telegram',
+    keywords: ["Telegram","TON","реклама","боты"],
+    content: ``
+  },
+{
+    id: 26,
+    slug: 'nvidia-1515-26',
+    title: "Настольный дата-центр: как NVIDIA упаковала целый ИИ-кластер в корпус 15×15 см",
+    description: "Настольный дата-центр: как NVIDIA упаковала целый ИИ-кластер в корпус 15×15 см",
+    date: '2025-10-30',
+    readTime: '3 мин',
+    category: 'Telegram',
+    keywords: ["Telegram","TON","реклама","боты"],
+    content: ``
+  },
+{
+    id: 27,
+    slug: 'archimate-27',
+    title: "Рисуем бизнес-процессы в нотации Archimate",
+    description: "Рисуем бизнес-процессы в нотации Archimate",
+    date: '2025-10-30',
+    readTime: '3 мин',
+    category: 'Telegram',
+    keywords: ["Telegram","TON","реклама","боты"],
+    content: ``
+  },
+{
     id: 22,
     slug: '8000-40-22',
     title: "Сура ПК8000. Компьютер и жизнь сообщества разработчиков спустя почти 40 лет",
