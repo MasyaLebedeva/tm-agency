@@ -3,7 +3,7 @@ import type { Metadata } from 'next'
 export const metadata: Metadata = {
   title: 'Услуги — T&M Agency',
   description: 'Полный спектр услуг по Telegram-маркетингу: посевы, Telegram Ads, креативы, стратегический консалтинг.',
-  alternates: { canonical: '/services' },
+  alternates: { canonical: 'https://tmads.ru/services' },
   openGraph: {
     title: 'Услуги — T&M Agency',
     description: 'Эффективное продвижение в Telegram под ключ.',

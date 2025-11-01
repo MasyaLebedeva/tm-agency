@@ -4,6 +4,10 @@ import type { Metadata } from 'next'
 export const metadata: Metadata = {
   title: 'Политика использования файлов cookie - T&M Agency',
   description: 'Политика использования файлов cookie на сайте T&M Agency',
+  alternates: {
+    canonical: 'https://tmads.ru/cookies',
+  },
+  robots: 'index, follow',
 }
 
 export default function CookiesPage() {

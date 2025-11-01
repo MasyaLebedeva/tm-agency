@@ -3,8 +3,35 @@
 import React, { useState } from 'react'
 import Link from 'next/link'
 import { notFound } from 'next/navigation'
+import type { Metadata } from 'next'
 import { casesData } from '../cases-data'
 import ContactModal from '@/components/ContactModal'
+
+export async function generateMetadata({ params }: { params: { id: string } }): Promise<Metadata> {
+  const caseId = parseInt(params.id)
+  const caseItem = casesData.find(c => c.id === caseId)
+  
+  if (!caseItem) {
+    return {
+      title: 'Кейс не найден - T&M Agency',
+      robots: 'noindex, follow',
+    }
+  }
+
+  return {
+    title: `${caseItem.title} - Кейс T&M Agency`,
+    description: caseItem.description,
+    alternates: {
+      canonical: `https://tmads.ru/cases/${caseItem.id}`,
+    },
+    openGraph: {
+      title: caseItem.title,
+      description: caseItem.description,
+      url: `https://tmads.ru/cases/${caseItem.id}`,
+      type: 'article',
+    },
+  }
+}
 
 export default function CaseDetail({ params }: { params: { id: string } }) {
   const [isModalOpen, setIsModalOpen] = useState(false)

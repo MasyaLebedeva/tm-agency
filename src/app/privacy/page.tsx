@@ -4,6 +4,10 @@ export const metadata: Metadata = {
   title: 'Политика конфиденциальности - T&M Agency',
   description: 'Политика конфиденциальности T&M Agency. Защита персональных данных клиентов.',
   keywords: 'политика конфиденциальности, защита данных, персональные данные',
+  alternates: {
+    canonical: 'https://tmads.ru/privacy',
+  },
+  robots: 'index, follow',
 }
 
 export default function PrivacyPolicy() {

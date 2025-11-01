@@ -4,6 +4,10 @@ export const metadata: Metadata = {
   title: 'Условия использования - T&M Agency',
   description: 'Условия использования сайта T&M Agency. Правила и условия предоставления услуг.',
   keywords: 'условия использования, правила сайта, пользовательское соглашение',
+  alternates: {
+    canonical: 'https://tmads.ru/terms',
+  },
+  robots: 'index, follow',
 }
 
 export default function TermsOfUse() {

@@ -20,7 +20,7 @@ export const metadata: Metadata = {
   publisher: 'T&M Agency',
   robots: 'index, follow',
   alternates: {
-    canonical: '/',
+    canonical: 'https://tmads.ru/',
   },
   icons: {
     icon: [
