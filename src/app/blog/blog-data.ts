@@ -10,6 +10,39 @@ function createSlug(title: string): string {
 
 export const blogPosts = [
 {
+    id: 34,
+    slug: '7-34',
+    title: "[Перевод] Как мы освободили 7 ТиБ памяти",
+    description: "[Перевод] Как мы освободили 7 ТиБ памяти",
+    date: '2025-11-03',
+    readTime: '3 мин',
+    category: 'Telegram',
+    keywords: ["Telegram","TON","реклама","боты"],
+    content: ``
+  },
+{
+    id: 35,
+    slug: 'go-c-zx-spectrum-35',
+    title: "С go на C++ за две недели. Переписываю эмулятор ZX Spectrum",
+    description: "С go на C++ за две недели. Переписываю эмулятор ZX Spectrum",
+    date: '2025-11-03',
+    readTime: '3 мин',
+    category: 'Telegram',
+    keywords: ["Telegram","TON","реклама","боты"],
+    content: ``
+  },
+{
+    id: 36,
+    slug: 'inverting-buck-boost-36',
+    title: "Инвертор напряжения или Inverting Buck-Boost",
+    description: "Инвертор напряжения или Inverting Buck-Boost",
+    date: '2025-11-03',
+    readTime: '3 мин',
+    category: 'Telegram',
+    keywords: ["Telegram","TON","реклама","боты"],
+    content: ``
+  },
+{
     id: 31,
     slug: '-31',
     title: "Как началась патентная гонка за технологиями дипфейков",
