@@ -11,7 +11,7 @@ const nextConfig = {
   },
   async redirects() {
     return [
-      // Редирект с www на без www
+      // Редирект с www на без www - только если запрос идет с www
       {
         source: '/:path*',
         has: [
@@ -21,12 +21,6 @@ const nextConfig = {
           },
         ],
         destination: 'https://tmads.ru/:path*',
-        permanent: true,
-      },
-      // Редирект со trailing slash на без (кроме корня)
-      {
-        source: '/:path+/',
-        destination: '/:path+',
         permanent: true,
       },
     ]
