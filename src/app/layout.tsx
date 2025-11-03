@@ -14,7 +14,7 @@ export const metadata: Metadata = {
   metadataBase: new URL('https://tmads.ru'),
   title: 'T&M Agency - Рекламное агентство в Telegram',
   description: 'Первое рекламное агентство в Telegram, специализирующееся на продвижении каналов и ботов. Посевы, Telegram ADS, креативы, оптимизация.',
-  keywords: 'telegram реклама, продвижение в telegram, telegram ads, посевы в telegram, telegram маркетинг, рекламное агентство telegram',
+  keywords: 'T&M Agency, TM Agency, телеграм агентство, telegram реклама, продвижение в telegram, telegram ads, посевы в telegram, telegram маркетинг, рекламное агентство telegram',
   authors: [{ name: 'T&M Agency' }],
   creator: 'T&M Agency',
   publisher: 'T&M Agency',
@@ -64,6 +64,10 @@ export default function RootLayout({
   return (
     <html lang="ru">
       <head>
+        {/* Yandex Verification */}
+        <meta name="yandex-verification" content="83818eed57828493" />
+        {/* Yandex Webmaster */}
+        <meta name="yandex" content="index, follow" />
         <link rel="icon" href="/favicon.ico" sizes="any" />
         <link rel="icon" href="/favicon.svg" type="image/svg+xml" />
         <link rel="apple-touch-icon" href="/apple-touch-icon.svg" />
@@ -105,6 +109,7 @@ export default function RootLayout({
               '@context': 'https://schema.org',
               '@type': 'WebSite',
               name: 'T&M Agency',
+              alternateName: ['TM Agency', 'T&M Telegram Agency', 'T&M Agency Telegram'],
               url: 'https://tmads.ru',
               potentialAction: {
                 '@type': 'SearchAction',
