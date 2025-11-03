@@ -10,6 +10,39 @@ function createSlug(title: string): string {
 
 export const blogPosts = [
 {
+    id: 31,
+    slug: '-31',
+    title: "Как началась патентная гонка за технологиями дипфейков",
+    description: "Как началась патентная гонка за технологиями дипфейков",
+    date: '2025-11-02',
+    readTime: '3 мин',
+    category: 'Telegram',
+    keywords: ["Telegram","TON","реклама","боты"],
+    content: ``
+  },
+{
+    id: 32,
+    slug: 'chatgpt-32',
+    title: "Проблема: сохранять и пересылать ответы ChatGpt",
+    description: "Проблема: сохранять и пересылать ответы ChatGpt",
+    date: '2025-11-02',
+    readTime: '3 мин',
+    category: 'Telegram',
+    keywords: ["Telegram","TON","реклама","боты"],
+    content: ``
+  },
+{
+    id: 33,
+    slug: 'painkiller-33',
+    title: "Ностальгические игры: Painkiller",
+    description: "Ностальгические игры: Painkiller",
+    date: '2025-11-02',
+    readTime: '3 мин',
+    category: 'Telegram',
+    keywords: ["Telegram","TON","реклама","боты"],
+    content: ``
+  },
+{
     id: 28,
     slug: '-28',
     title: "Этикет в рабочих чатах: как общаться, чтобы коллеги не отправили тебя в бан",
