@@ -40,6 +40,14 @@ export const metadata: Metadata = {
     siteName: 'T&M Agency',
     locale: 'ru_RU',
     type: 'website',
+    images: [
+      {
+        url: 'https://tmads.ru/favicon.svg',
+        width: 512,
+        height: 512,
+        alt: 'T&M Agency Logo',
+      },
+    ],
   },
   twitter: {
     card: 'summary_large_image',
@@ -67,9 +75,20 @@ export default function RootLayout({
               '@type': 'Organization',
               name: 'T&M Agency',
               url: 'https://tmads.ru',
-              logo: 'https://tmads.ru/favicon.svg',
+              logo: {
+                '@type': 'ImageObject',
+                url: 'https://tmads.ru/favicon.svg',
+                width: 512,
+                height: 512,
+              },
+              image: {
+                '@type': 'ImageObject',
+                url: 'https://tmads.ru/favicon.svg',
+                width: 512,
+                height: 512,
+              },
               sameAs: [
-                'https://t.me/',
+                'https://t.me/TM_Agency',
               ],
               contactPoint: [{
                 '@type': 'ContactPoint',
