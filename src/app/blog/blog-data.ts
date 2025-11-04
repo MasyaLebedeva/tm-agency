@@ -10,6 +10,39 @@ function createSlug(title: string): string {
 
 export const blogPosts = [
 {
+    id: 37,
+    slug: 'htmx-fetchening-40-30-37',
+    title: "Грядет htmx — fetch()ening. Когда приходится выпускать версию 4.0, потому что пообещал, что версии 3.0 никогда не будет",
+    description: "Грядет htmx — fetch()ening. Когда приходится выпускать версию 4.0, потому что пообещал, что версии 3.0 никогда не будет",
+    date: '2025-11-04',
+    readTime: '3 мин',
+    category: 'Telegram',
+    keywords: ["Telegram","TON","реклама","боты"],
+    content: ``
+  },
+{
+    id: 38,
+    slug: 'sdk-38',
+    title: "SDK для машинного перевода",
+    description: "SDK для машинного перевода",
+    date: '2025-11-04',
+    readTime: '3 мин',
+    category: 'Telegram',
+    keywords: ["Telegram","TON","реклама","боты"],
+    content: ``
+  },
+{
+    id: 39,
+    slug: '-39',
+    title: "Почему дисциплина через силу не работает",
+    description: "Почему дисциплина через силу не работает",
+    date: '2025-11-04',
+    readTime: '3 мин',
+    category: 'Telegram',
+    keywords: ["Telegram","TON","реклама","боты"],
+    content: ``
+  },
+{
     id: 34,
     slug: '7-34',
     title: "[Перевод] Как мы освободили 7 ТиБ памяти",
