@@ -10,6 +10,39 @@ function createSlug(title: string): string {
 
 export const blogPosts = [
 {
+    id: 40,
+    slug: 'coordinate-space-40',
+    title: "Координатные пространства/Coordinate Space в компьютерной графике. Объясняю на чайниках",
+    description: "Координатные пространства/Coordinate Space в компьютерной графике. Объясняю на чайниках",
+    date: '2025-11-05',
+    readTime: '3 мин',
+    category: 'Telegram',
+    keywords: ["Telegram","TON","реклама","боты"],
+    content: ``
+  },
+{
+    id: 41,
+    slug: '-41',
+    title: "Корпоративные стандарты АСУ ТП в пищевой, энергетической и горнодобывающей отраслях",
+    description: "Корпоративные стандарты АСУ ТП в пищевой, энергетической и горнодобывающей отраслях",
+    date: '2025-11-05',
+    readTime: '3 мин',
+    category: 'Telegram',
+    keywords: ["Telegram","TON","реклама","боты"],
+    content: ``
+  },
+{
+    id: 42,
+    slug: 'red-teaming-42',
+    title: "Код красный: целевая кибератака или red teaming",
+    description: "Код красный: целевая кибератака или red teaming",
+    date: '2025-11-05',
+    readTime: '3 мин',
+    category: 'Telegram',
+    keywords: ["Telegram","TON","реклама","боты"],
+    content: ``
+  },
+{
     id: 37,
     slug: 'htmx-fetchening-40-30-37',
     title: "Грядет htmx — fetch()ening. Когда приходится выпускать версию 4.0, потому что пообещал, что версии 3.0 никогда не будет",
