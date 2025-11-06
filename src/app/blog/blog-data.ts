@@ -10,6 +10,39 @@ function createSlug(title: string): string {
 
 export const blogPosts = [
 {
+    id: 43,
+    slug: '-43',
+    title: "Префаб с автоматикой — что внутри?",
+    description: "Префаб с автоматикой — что внутри?",
+    date: '2025-11-06',
+    readTime: '3 мин',
+    category: 'Telegram',
+    keywords: ["Telegram","TON","реклама","боты"],
+    content: ``
+  },
+{
+    id: 44,
+    slug: 'luwrain-llm-44',
+    title: "История опенсорс-проекта LUWRAIN: как эксперименты с LLM помогают создавать невизуальные интерфейсы для незрячих",
+    description: "История опенсорс-проекта LUWRAIN: как эксперименты с LLM помогают создавать невизуальные интерфейсы для незрячих",
+    date: '2025-11-06',
+    readTime: '3 мин',
+    category: 'Telegram',
+    keywords: ["Telegram","TON","реклама","боты"],
+    content: ``
+  },
+{
+    id: 45,
+    slug: 'rasa-45',
+    title: "Как мы доработали фреймворк Rasa, чтобы сделать своего ИИ-секретаря для ответа на звонки",
+    description: "Как мы доработали фреймворк Rasa, чтобы сделать своего ИИ-секретаря для ответа на звонки",
+    date: '2025-11-06',
+    readTime: '3 мин',
+    category: 'Telegram',
+    keywords: ["Telegram","TON","реклама","боты"],
+    content: ``
+  },
+{
     id: 40,
     slug: 'coordinate-space-40',
     title: "Координатные пространства/Coordinate Space в компьютерной графике. Объясняю на чайниках",
