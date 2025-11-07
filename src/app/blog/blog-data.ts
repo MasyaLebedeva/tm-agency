@@ -10,6 +10,39 @@ function createSlug(title: string): string {
 
 export const blogPosts = [
 {
+    id: 46,
+    slug: 'loopback-net-api-90-46',
+    title: "Как мы заменили Loopback на универсальный .NET API и получили единый контракт для 90% эндпоинтов",
+    description: "Как мы заменили Loopback на универсальный .NET API и получили единый контракт для 90% эндпоинтов",
+    date: '2025-11-07',
+    readTime: '3 мин',
+    category: 'Telegram',
+    keywords: ["Telegram","TON","реклама","боты"],
+    content: ``
+  },
+{
+    id: 47,
+    slug: '16-47',
+    title: "Правда, что в английском 16 времён?",
+    description: "Правда, что в английском 16 времён?",
+    date: '2025-11-07',
+    readTime: '3 мин',
+    category: 'Telegram',
+    keywords: ["Telegram","TON","реклама","боты"],
+    content: ``
+  },
+{
+    id: 48,
+    slug: 'chatgpt-teamly-ai-48',
+    title: "Почему ChatGPT недостаточно для бизнеса: обзор Teamly AI для средних и крупных компаний",
+    description: "Почему ChatGPT недостаточно для бизнеса: обзор Teamly AI для средних и крупных компаний",
+    date: '2025-11-07',
+    readTime: '3 мин',
+    category: 'Telegram',
+    keywords: ["Telegram","TON","реклама","боты"],
+    content: ``
+  },
+{
     id: 43,
     slug: '-43',
     title: "Префаб с автоматикой — что внутри?",
