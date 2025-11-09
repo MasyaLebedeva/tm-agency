@@ -10,6 +10,39 @@ function createSlug(title: string): string {
 
 export const blogPosts = [
 {
+    id: 52,
+    slug: '-52',
+    title: "Алгоритм творчества как возможная основа для сильного искусственного интеллекта",
+    description: "Алгоритм творчества как возможная основа для сильного искусственного интеллекта",
+    date: '2025-11-09',
+    readTime: '3 мин',
+    category: 'Telegram',
+    keywords: ["Telegram","TON","реклама","боты"],
+    content: ``
+  },
+{
+    id: 53,
+    slug: '-53',
+    title: "Как мы запустили свой спутник. Разбираю процесс по шагам",
+    description: "Как мы запустили свой спутник. Разбираю процесс по шагам",
+    date: '2025-11-09',
+    readTime: '3 мин',
+    category: 'Telegram',
+    keywords: ["Telegram","TON","реклама","боты"],
+    content: ``
+  },
+{
+    id: 54,
+    slug: 'k6-54',
+    title: "Нагрузочное тестирование K6 (Концепт)",
+    description: "Нагрузочное тестирование K6 (Концепт)",
+    date: '2025-11-09',
+    readTime: '3 мин',
+    category: 'Telegram',
+    keywords: ["Telegram","TON","реклама","боты"],
+    content: ``
+  },
+{
     id: 49,
     slug: '-49',
     title: "Киберспорт: что нужно, чтобы стать профессионалом",
