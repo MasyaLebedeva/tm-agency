@@ -10,6 +10,39 @@ function createSlug(title: string): string {
 
 export const blogPosts = [
 {
+    id: 58,
+    slug: 'apm-58',
+    title: "Сбор и отправка APM-трейсов из разных сервисов: как мы приручили трейсинг в монолитах",
+    description: "Сбор и отправка APM-трейсов из разных сервисов: как мы приручили трейсинг в монолитах",
+    date: '2025-11-11',
+    readTime: '3 мин',
+    category: 'Telegram',
+    keywords: ["Telegram","TON","реклама","боты"],
+    content: ``
+  },
+{
+    id: 59,
+    slug: 'ci-2-docker-swarm-59',
+    title: "Как мы ускорили CI в 2 раза с помощью Docker Swarm и немного здравого смысла",
+    description: "Как мы ускорили CI в 2 раза с помощью Docker Swarm и немного здравого смысла",
+    date: '2025-11-11',
+    readTime: '3 мин',
+    category: 'Telegram',
+    keywords: ["Telegram","TON","реклама","боты"],
+    content: ``
+  },
+{
+    id: 60,
+    slug: '5-rust-60',
+    title: "5 способов убить производительность в асинхронном Rust",
+    description: "5 способов убить производительность в асинхронном Rust",
+    date: '2025-11-11',
+    readTime: '3 мин',
+    category: 'Telegram',
+    keywords: ["Telegram","TON","реклама","боты"],
+    content: ``
+  },
+{
     id: 55,
     slug: '-55',
     title: "Краткая история создания аудиокассеты. Часть первая",
