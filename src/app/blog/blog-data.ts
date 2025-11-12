@@ -10,6 +10,39 @@ function createSlug(title: string): string {
 
 export const blogPosts = [
 {
+    id: 61,
+    slug: 'python-61',
+    title: "Как Python раскрыл поэтический гений Маршака",
+    description: "Как Python раскрыл поэтический гений Маршака",
+    date: '2025-11-12',
+    readTime: '3 мин',
+    category: 'Telegram',
+    keywords: ["Telegram","TON","реклама","боты"],
+    content: ``
+  },
+{
+    id: 62,
+    slug: 'jetpack-compose-android-62',
+    title: "Рецензия на книгу “Основы JetPack Compose: Разработка приложений для Android”",
+    description: "Рецензия на книгу “Основы JetPack Compose: Разработка приложений для Android”",
+    date: '2025-11-12',
+    readTime: '3 мин',
+    category: 'Telegram',
+    keywords: ["Telegram","TON","реклама","боты"],
+    content: ``
+  },
+{
+    id: 63,
+    slug: '-63',
+    title: "Почему мышление через видео может быть следующим шагом в развитии ИИ",
+    description: "Почему мышление через видео может быть следующим шагом в развитии ИИ",
+    date: '2025-11-12',
+    readTime: '3 мин',
+    category: 'Telegram',
+    keywords: ["Telegram","TON","реклама","боты"],
+    content: ``
+  },
+{
     id: 58,
     slug: 'apm-58',
     title: "Сбор и отправка APM-трейсов из разных сервисов: как мы приручили трейсинг в монолитах",
