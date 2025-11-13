@@ -10,6 +10,39 @@ function createSlug(title: string): string {
 
 export const blogPosts = [
 {
+    id: 64,
+    slug: '-64',
+    title: "Без интернета и шпионов: как мы собрали локального голосового ассистента",
+    description: "Без интернета и шпионов: как мы собрали локального голосового ассистента",
+    date: '2025-11-13',
+    readTime: '3 мин',
+    category: 'Telegram',
+    keywords: ["Telegram","TON","реклама","боты"],
+    content: ``
+  },
+{
+    id: 65,
+    slug: '-65',
+    title: "История «Аркейна», рассказанная Джейсом: Как главный герой остался за кадром",
+    description: "История «Аркейна», рассказанная Джейсом: Как главный герой остался за кадром",
+    date: '2025-11-13',
+    readTime: '3 мин',
+    category: 'Telegram',
+    keywords: ["Telegram","TON","реклама","боты"],
+    content: ``
+  },
+{
+    id: 66,
+    slug: '-66',
+    title: "Электростатическая фильтрация воздуха",
+    description: "Электростатическая фильтрация воздуха",
+    date: '2025-11-13',
+    readTime: '3 мин',
+    category: 'Telegram',
+    keywords: ["Telegram","TON","реклама","боты"],
+    content: ``
+  },
+{
     id: 61,
     slug: 'python-61',
     title: "Как Python раскрыл поэтический гений Маршака",
