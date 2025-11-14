@@ -10,6 +10,39 @@ function createSlug(title: string): string {
 
 export const blogPosts = [
 {
+    id: 67,
+    slug: '-67',
+    title: "Как сделать бота в Яндекс Мессенджере",
+    description: "Как сделать бота в Яндекс Мессенджере",
+    date: '2025-11-14',
+    readTime: '3 мин',
+    category: 'Telegram',
+    keywords: ["Telegram","TON","реклама","боты"],
+    content: ``
+  },
+{
+    id: 68,
+    slug: 'opensearch-68',
+    title: "Интеграция OpenSearch: от функционального тестирования до проверки интеллекта поиска",
+    description: "Интеграция OpenSearch: от функционального тестирования до проверки интеллекта поиска",
+    date: '2025-11-14',
+    readTime: '3 мин',
+    category: 'Telegram',
+    keywords: ["Telegram","TON","реклама","боты"],
+    content: ``
+  },
+{
+    id: 69,
+    slug: '-69',
+    title: "Как настроить таргет так, чтобы не потерять деньги и привлечь клиентов. Разбираем на примере автотематики",
+    description: "Как настроить таргет так, чтобы не потерять деньги и привлечь клиентов. Разбираем на примере автотематики",
+    date: '2025-11-14',
+    readTime: '3 мин',
+    category: 'Telegram',
+    keywords: ["Telegram","TON","реклама","боты"],
+    content: ``
+  },
+{
     id: 64,
     slug: '-64',
     title: "Без интернета и шпионов: как мы собрали локального голосового ассистента",
