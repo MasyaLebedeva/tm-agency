@@ -10,6 +10,39 @@ function createSlug(title: string): string {
 
 export const blogPosts = [
 {
+    id: 73,
+    slug: 'fallout-new-vegas-73',
+    title: "Ностальгические игры: Fallout New Vegas",
+    description: "Ностальгические игры: Fallout New Vegas",
+    date: '2025-11-16',
+    readTime: '3 мин',
+    category: 'Telegram',
+    keywords: ["Telegram","TON","реклама","боты"],
+    content: ``
+  },
+{
+    id: 74,
+    slug: 'minecraft-74',
+    title: "Самые необычные серверы Minecraft: от умной лампочки до микроконтроллера. Как это работает?",
+    description: "Самые необычные серверы Minecraft: от умной лампочки до микроконтроллера. Как это работает?",
+    date: '2025-11-16',
+    readTime: '3 мин',
+    category: 'Telegram',
+    keywords: ["Telegram","TON","реклама","боты"],
+    content: ``
+  },
+{
+    id: 75,
+    slug: 'ocr-6-open-source-75',
+    title: "Современные OCR для сложных документов: сравниваем 6 open-source моделей на реальном кошмаре инженера",
+    description: "Современные OCR для сложных документов: сравниваем 6 open-source моделей на реальном кошмаре инженера",
+    date: '2025-11-16',
+    readTime: '3 мин',
+    category: 'Telegram',
+    keywords: ["Telegram","TON","реклама","боты"],
+    content: ``
+  },
+{
     id: 70,
     slug: 'xix-70',
     title: "Работает в моменте — разоряет на дистанции, или Как исчез самый большой капитал США XIX века",
