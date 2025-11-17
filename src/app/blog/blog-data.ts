@@ -10,6 +10,39 @@ function createSlug(title: string): string {
 
 export const blogPosts = [
 {
+    id: 76,
+    slug: 'javascript-76',
+    title: "Ваши тесты упали по причине JavaScript",
+    description: "Ваши тесты упали по причине JavaScript",
+    date: '2025-11-17',
+    readTime: '3 мин',
+    category: 'Telegram',
+    keywords: ["Telegram","TON","реклама","боты"],
+    content: ``
+  },
+{
+    id: 77,
+    slug: 'apache-kafka-qa-77',
+    title: "Apache Kafka для QA инженера",
+    description: "Apache Kafka для QA инженера",
+    date: '2025-11-17',
+    readTime: '3 мин',
+    category: 'Telegram',
+    keywords: ["Telegram","TON","реклама","боты"],
+    content: ``
+  },
+{
+    id: 78,
+    slug: '-78',
+    title: "Как мы проектируем и ставим импланты детям в виде божьих коровок, чтобы им лучше дышалось",
+    description: "Как мы проектируем и ставим импланты детям в виде божьих коровок, чтобы им лучше дышалось",
+    date: '2025-11-17',
+    readTime: '3 мин',
+    category: 'Telegram',
+    keywords: ["Telegram","TON","реклама","боты"],
+    content: ``
+  },
+{
     id: 73,
     slug: 'fallout-new-vegas-73',
     title: "Ностальгические игры: Fallout New Vegas",
