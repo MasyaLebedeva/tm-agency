@@ -10,6 +10,39 @@ function createSlug(title: string): string {
 
 export const blogPosts = [
 {
+    id: 79,
+    slug: 'llm-79',
+    title: "Вы не сможете это развидеть: краткий гайд по определению LLM-текстов на хабре",
+    description: "Вы не сможете это развидеть: краткий гайд по определению LLM-текстов на хабре",
+    date: '2025-11-18',
+    readTime: '3 мин',
+    category: 'Telegram',
+    keywords: ["Telegram","TON","реклама","боты"],
+    content: ``
+  },
+{
+    id: 80,
+    slug: 'sdr-75-plutosdr-nano-80',
+    title: "SDR с высочайшим соотношением цены и качества за 75 долларов: Распаковка и всестороннее тестирование PLUTOSDR NANO",
+    description: "SDR с высочайшим соотношением цены и качества за 75 долларов: Распаковка и всестороннее тестирование PLUTOSDR NANO",
+    date: '2025-11-18',
+    readTime: '3 мин',
+    category: 'Telegram',
+    keywords: ["Telegram","TON","реклама","боты"],
+    content: ``
+  },
+{
+    id: 81,
+    slug: 'agile-scrum-81',
+    title: "Agile, Scrum и спринты: секрет эффективности проектного офиса",
+    description: "Agile, Scrum и спринты: секрет эффективности проектного офиса",
+    date: '2025-11-18',
+    readTime: '3 мин',
+    category: 'Telegram',
+    keywords: ["Telegram","TON","реклама","боты"],
+    content: ``
+  },
+{
     id: 76,
     slug: 'javascript-76',
     title: "Ваши тесты упали по причине JavaScript",
