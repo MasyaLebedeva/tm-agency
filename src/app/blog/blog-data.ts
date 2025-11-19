@@ -10,6 +10,39 @@ function createSlug(title: string): string {
 
 export const blogPosts = [
 {
+    id: 82,
+    slug: '-82',
+    title: "[Перевод] ИИ в ядерной энергетике: технический прорыв или новая катастрофа?",
+    description: "[Перевод] ИИ в ядерной энергетике: технический прорыв или новая катастрофа?",
+    date: '2025-11-19',
+    readTime: '3 мин',
+    category: 'Telegram',
+    keywords: ["Telegram","TON","реклама","боты"],
+    content: ``
+  },
+{
+    id: 83,
+    slug: '5-83',
+    title: "5 громких споров из-за доменного имени",
+    description: "5 громких споров из-за доменного имени",
+    date: '2025-11-19',
+    readTime: '3 мин',
+    category: 'Telegram',
+    keywords: ["Telegram","TON","реклама","боты"],
+    content: ``
+  },
+{
+    id: 84,
+    slug: 'systemd-nspawn-84',
+    title: "systemd-nspawn: продолжаем знакомство",
+    description: "systemd-nspawn: продолжаем знакомство",
+    date: '2025-11-19',
+    readTime: '3 мин',
+    category: 'Telegram',
+    keywords: ["Telegram","TON","реклама","боты"],
+    content: ``
+  },
+{
     id: 79,
     slug: 'llm-79',
     title: "Вы не сможете это развидеть: краткий гайд по определению LLM-текстов на хабре",
