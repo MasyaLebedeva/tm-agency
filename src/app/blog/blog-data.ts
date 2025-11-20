@@ -10,6 +10,39 @@ function createSlug(title: string): string {
 
 export const blogPosts = [
 {
+    id: 85,
+    slug: '-85',
+    title: "Генерация схем бизнес-процессов с помощью ИИ на основе текстового ТЗ",
+    description: "Генерация схем бизнес-процессов с помощью ИИ на основе текстового ТЗ",
+    date: '2025-11-20',
+    readTime: '3 мин',
+    category: 'Telegram',
+    keywords: ["Telegram","TON","реклама","боты"],
+    content: ``
+  },
+{
+    id: 86,
+    slug: '1-86',
+    title: "Сопровождение 1С: КАСКО для вашей бухгалтерии",
+    description: "Сопровождение 1С: КАСКО для вашей бухгалтерии",
+    date: '2025-11-20',
+    readTime: '3 мин',
+    category: 'Telegram',
+    keywords: ["Telegram","TON","реклама","боты"],
+    content: ``
+  },
+{
+    id: 87,
+    slug: 'mcp-87',
+    title: "Вайб-кодинг от-кутюр: MCP-сервер проверки и запуска кода на Питоне",
+    description: "Вайб-кодинг от-кутюр: MCP-сервер проверки и запуска кода на Питоне",
+    date: '2025-11-20',
+    readTime: '3 мин',
+    category: 'Telegram',
+    keywords: ["Telegram","TON","реклама","боты"],
+    content: ``
+  },
+{
     id: 82,
     slug: '-82',
     title: "[Перевод] ИИ в ядерной энергетике: технический прорыв или новая катастрофа?",
