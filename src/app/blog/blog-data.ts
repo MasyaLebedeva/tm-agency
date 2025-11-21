@@ -10,6 +10,39 @@ function createSlug(title: string): string {
 
 export const blogPosts = [
 {
+    id: 88,
+    slug: 'nuxt-2-nuxt-3-88',
+    title: "Переезд с Nuxt 2 на Nuxt 3: почему для крупного интернет-магазина мы выбрали рерайт, а не миграцию",
+    description: "Переезд с Nuxt 2 на Nuxt 3: почему для крупного интернет-магазина мы выбрали рерайт, а не миграцию",
+    date: '2025-11-21',
+    readTime: '3 мин',
+    category: 'Telegram',
+    keywords: ["Telegram","TON","реклама","боты"],
+    content: ``
+  },
+{
+    id: 89,
+    slug: 'ai-89',
+    title: "Как мы сократили время планирования спринтов с помощью AI",
+    description: "Как мы сократили время планирования спринтов с помощью AI",
+    date: '2025-11-21',
+    readTime: '3 мин',
+    category: 'Telegram',
+    keywords: ["Telegram","TON","реклама","боты"],
+    content: ``
+  },
+{
+    id: 90,
+    slug: 'cicd-90',
+    title: "CI/CD и непрерывное тестирование (управление рисками в условиях постоянных изменений)",
+    description: "CI/CD и непрерывное тестирование (управление рисками в условиях постоянных изменений)",
+    date: '2025-11-21',
+    readTime: '3 мин',
+    category: 'Telegram',
+    keywords: ["Telegram","TON","реклама","боты"],
+    content: ``
+  },
+{
     id: 85,
     slug: '-85',
     title: "Генерация схем бизнес-процессов с помощью ИИ на основе текстового ТЗ",
