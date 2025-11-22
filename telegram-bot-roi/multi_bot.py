@@ -25,6 +25,10 @@ load_dotenv()
 logging.basicConfig(level=logging.INFO)
 logger = logging.getLogger(__name__)
 
+# Версия кода для отладки
+CODE_VERSION = "2025-11-22-v2-direct-api-calls"
+logger.info(f"📦 Версия кода: {CODE_VERSION}")
+
 BASE_DIR = os.path.dirname(os.path.abspath(__file__))
 WEBHOOK_URL = os.getenv("WEBHOOK_URL", "").strip()
 
