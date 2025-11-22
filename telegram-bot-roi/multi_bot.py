@@ -541,18 +541,23 @@ async def webhook_handler(request):
     # Извлекаем токен из URL: /webhook/{token}
     token = request.match_info.get('token', '')
     
-    logger.info(f"🌐 Получен webhook запрос: {request.method} {request.path_qs}")
+    logger.info(f"🌐 WEBHOOK ЗАПРОС: {request.method} {request.path_qs}, token={token[:10] if token else 'НЕТ'}...")
+    logger.info(f"🌐 Headers: {dict(request.headers)}")
     
     if not token:
         logger.error("❌ Токен не найден в URL")
         return web.Response(status=400, text="Token required")
     
     try:
+        logger.info(f"🌐 Читаю JSON данные...")
         update_data = await request.json()
-        logger.info(f"📦 Данные обновления: {update_data.get('update_id', 'unknown')}")
-        return await bot_manager.process_webhook(token, update_data)
+        logger.info(f"📦 Данные обновления получены: update_id={update_data.get('update_id', 'unknown')}, тип={list(update_data.keys())}")
+        result = await bot_manager.process_webhook(token, update_data)
+        logger.info(f"✅ Webhook обработан успешно")
+        return result
     except Exception as e:
         logger.error(f"❌ Ошибка при обработке webhook: {e}")
+        logger.error(f"Тип ошибки: {type(e).__name__}")
         logger.error(f"Трассировка: {traceback.format_exc()}")
         return web.Response(status=500, text="Internal error")
 
