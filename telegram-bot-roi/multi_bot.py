@@ -5,9 +5,14 @@ Multi-Bot Manager - Управление несколькими Telegram бот�
 import os
 import logging
 import sqlite3
-import psycopg2
-from psycopg2.extras import RealDictCursor
 import io
+# Импортируем psycopg2 только если нужен (во время выполнения, не во время сборки)
+try:
+    import psycopg2
+    from psycopg2.extras import RealDictCursor
+    PSYCOPG2_AVAILABLE = True
+except ImportError:
+    PSYCOPG2_AVAILABLE = False
 from datetime import datetime, timedelta
 from aiogram import Bot, Dispatcher
 from aiogram.types import Message, InlineKeyboardMarkup, InlineKeyboardButton, CallbackQuery, Update, BotCommand
@@ -66,7 +71,7 @@ def get_db_connection(bot_name: str):
     """Получить подключение к базе данных (PostgreSQL или SQLite)"""
     global _postgresql_logged
     
-    if use_postgresql():
+    if use_postgresql() and PSYCOPG2_AVAILABLE:
         # Используем PostgreSQL
         if not _postgresql_logged:
             logger.info("✅ Используется PostgreSQL для хранения данных")
@@ -77,7 +82,10 @@ def get_db_connection(bot_name: str):
     else:
         # Используем SQLite
         if not _postgresql_logged:
-            logger.info("ℹ️ Используется SQLite для хранения данных")
+            if use_postgresql() and not PSYCOPG2_AVAILABLE:
+                logger.warning("⚠️ DATABASE_URL установлен, но psycopg2 не доступен. Используется SQLite.")
+            else:
+                logger.info("ℹ️ Используется SQLite для хранения данных")
             _postgresql_logged = True
         db_path = os.path.join(DATA_DIR, f'{bot_name.lower()}.db')
         conn = sqlite3.connect(db_path)
