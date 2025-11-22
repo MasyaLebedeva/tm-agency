@@ -62,7 +62,16 @@ else:
 def use_postgresql():
     """Проверяет, используется ли PostgreSQL"""
     database_url = os.getenv("DATABASE_URL", "")
-    return bool(database_url and database_url.startswith("postgres"))
+    if database_url:
+        logger.info(f"🔍 DATABASE_URL найден: {database_url[:30]}... (длина: {len(database_url)})")
+        if database_url.startswith("postgres"):
+            logger.info("✅ DATABASE_URL указывает на PostgreSQL")
+            return True
+        else:
+            logger.warning(f"⚠️ DATABASE_URL не начинается с 'postgres': {database_url[:50]}")
+    else:
+        logger.warning("⚠️ DATABASE_URL не установлен в переменных окружения")
+    return False
 
 # Глобальная переменная для отслеживания первого подключения
 _postgresql_logged = False
