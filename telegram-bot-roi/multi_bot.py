@@ -164,7 +164,7 @@ class BotManager:
                 return data
             
             async def on_process_callback_query(self, callback: CallbackQuery, data: dict):
-                logger.info(f"[{bot_name}] Callback от {callback.from_user.id}: {callback.data}")
+                logger.info(f"[{bot_name}] 🔔 CALLBACK в middleware: data={callback.data}, user_id={callback.from_user.id}, callback_id={callback.id}")
                 return data
         
         dp.middleware.setup(LoggingMiddleware())
@@ -225,9 +225,12 @@ class BotManager:
         @dp.callback_query_handler(lambda c: c.data == "check_subscription")
         async def process_subscription(callback: CallbackQuery):
             user_id = callback.from_user.id
-            logger.info(f"[{bot_name}] 🔍 Проверка подписки для пользователя {user_id}")
+            callback_id = callback.id
+            logger.info(f"[{bot_name}] 🔍 CALLBACK ПОЛУЧЕН: check_subscription от пользователя {user_id}, callback_id={callback_id}")
             try:
+                logger.info(f"[{bot_name}] 📤 Отправляю ответ на callback...")
                 await callback.answer("⏳ Проверяю подписку...")
+                logger.info(f"[{bot_name}] ✅ Ответ на callback отправлен")
                 
                 if not config.channel_id:
                     logger.warning(f"[{bot_name}] ⚠️ CHANNEL_ID не настроен для {bot_name}")
