@@ -581,6 +581,9 @@ app.on_startup.append(on_startup)
 app.on_shutdown.append(on_shutdown)
 
 if __name__ == "__main__":
+    logger.info("=" * 80)
+    logger.info(f"🚀 ЗАПУСК МУЛЬТИ-БОТА - ВЕРСИЯ: {CODE_VERSION}")
+    logger.info("=" * 80)
     port = int(os.getenv("PORT", 10000))
     logger.info(f"Запуск сервера на порту {port}")
     web.run_app(app, port=port, host='0.0.0.0')
