@@ -191,8 +191,13 @@ class BotManager:
                           message.from_user.last_name, message.from_user.language_code, datetime.now(), datetime.now()))
                 c.execute('UPDATE users SET last_activity = ? WHERE user_id = ?', (datetime.now(), user_id))
                 conn.commit()
+                
+                # Проверяем количество пользователей в базе
+                c.execute('SELECT COUNT(*) FROM users')
+                total_users = c.fetchone()[0]
                 conn.close()
-                logger.info(f"[{bot_name}] ✅ Пользователь {user_id} добавлен/обновлён в БД")
+                
+                logger.info(f"[{bot_name}] ✅ Пользователь {user_id} добавлен/обновлён в БД. Всего в базе: {total_users}")
                 
                 # Приветственное сообщение в зависимости от типа бота
                 if is_gigtest_bot:
@@ -344,12 +349,120 @@ class BotManager:
                 active = c.fetchone()[0]
                 conn.close()
                 
+                # Кнопки админ-панели
+                admin_markup = InlineKeyboardMarkup(inline_keyboard=[
+                    [InlineKeyboardButton(text="👥 Пользователи", callback_data=f"admin_users_{bot_name}")],
+                    [InlineKeyboardButton(text="📥 Экспорт базы", callback_data=f"admin_export_{bot_name}")],
+                    [InlineKeyboardButton(text="📊 Статистика", callback_data=f"admin_stats_{bot_name}")]
+                ])
+                
                 await message.answer(
                     f"👋 Админ-панель [{bot_name}]\n\n"
                     f"📈 Статистика:\n"
                     f"👥 Всего пользователей: {total}\n"
                     f"✅ Подписано: {subscribed}\n"
-                    f"🟢 Активных за сутки: {active}"
+                    f"🟢 Активных за сутки: {active}\n\n"
+                    f"Выбери действие:",
+                    reply_markup=admin_markup
+                )
+            
+            # Обработчик просмотра пользователей
+            @dp.callback_query_handler(lambda c: c.data and c.data.startswith(f"admin_users_{bot_name}"))
+            async def admin_users(callback: CallbackQuery):
+                Bot.set_current(bot)
+                if callback.from_user.id not in config.admin_ids:
+                    await callback.answer("⛔️ Нет доступа", show_alert=True)
+                    return
+                
+                await callback.answer("⏳ Загружаю пользователей...")
+                
+                conn = sqlite3.connect(config.db_path)
+                c = conn.cursor()
+                c.execute('SELECT user_id, username, first_name, is_subscribed, joined_at FROM users ORDER BY joined_at DESC LIMIT 50')
+                users = c.fetchall()
+                conn.close()
+                
+                if not users:
+                    await callback.message.answer("📭 Пользователей пока нет")
+                    return
+                
+                text = f"👥 Пользователи [{bot_name}] (показано {len(users)} из последних 50):\n\n"
+                for user_id, username, first_name, is_subscribed, joined_at in users:
+                    status = "✅" if is_subscribed else "❌"
+                    username_str = f"@{username}" if username else "без username"
+                    name_str = first_name or "без имени"
+                    text += f"{status} {name_str} ({username_str})\nID: {user_id}\nДата: {joined_at}\n\n"
+                
+                # Разбиваем на части, если слишком длинное
+                if len(text) > 4000:
+                    parts = [text[i:i+4000] for i in range(0, len(text), 4000)]
+                    for part in parts:
+                        await callback.message.answer(part)
+                else:
+                    await callback.message.answer(text)
+            
+            # Обработчик экспорта базы данных
+            @dp.callback_query_handler(lambda c: c.data and c.data.startswith(f"admin_export_{bot_name}"))
+            async def admin_export(callback: CallbackQuery):
+                Bot.set_current(bot)
+                if callback.from_user.id not in config.admin_ids:
+                    await callback.answer("⛔️ Нет доступа", show_alert=True)
+                    return
+                
+                await callback.answer("⏳ Формирую экспорт...")
+                
+                conn = sqlite3.connect(config.db_path)
+                c = conn.cursor()
+                c.execute('SELECT * FROM users')
+                users = c.fetchall()
+                conn.close()
+                
+                if not users:
+                    await callback.message.answer("📭 База данных пуста")
+                    return
+                
+                # Формируем CSV
+                csv_data = "user_id,username,first_name,last_name,language_code,joined_at,last_activity,is_subscribed,source,utm_source,utm_medium,utm_campaign,referrer_id,referrals_count\n"
+                for user in users:
+                    csv_data += ",".join([str(x) if x is not None else "" for x in user]) + "\n"
+                
+                # Отправляем как файл
+                csv_file = io.BytesIO(csv_data.encode('utf-8'))
+                csv_file.name = f"users_{bot_name}_{datetime.now().strftime('%Y%m%d_%H%M%S')}.csv"
+                
+                await bot.send_document(callback.from_user.id, csv_file, caption=f"📥 Экспорт базы данных [{bot_name}]\nВсего пользователей: {len(users)}")
+            
+            # Обработчик статистики
+            @dp.callback_query_handler(lambda c: c.data and c.data.startswith(f"admin_stats_{bot_name}"))
+            async def admin_stats(callback: CallbackQuery):
+                Bot.set_current(bot)
+                if callback.from_user.id not in config.admin_ids:
+                    await callback.answer("⛔️ Нет доступа", show_alert=True)
+                    return
+                
+                await callback.answer("⏳ Загружаю статистику...")
+                
+                conn = sqlite3.connect(config.db_path)
+                c = conn.cursor()
+                c.execute('SELECT COUNT(*) FROM users')
+                total = c.fetchone()[0]
+                c.execute('SELECT COUNT(*) FROM users WHERE is_subscribed = 1')
+                subscribed = c.fetchone()[0]
+                c.execute("SELECT COUNT(*) FROM users WHERE last_activity > datetime('now','-1 day')")
+                active_24h = c.fetchone()[0]
+                c.execute("SELECT COUNT(*) FROM users WHERE last_activity > datetime('now','-7 days')")
+                active_7d = c.fetchone()[0]
+                c.execute("SELECT COUNT(*) FROM users WHERE source IS NOT NULL AND source != ''")
+                with_source = c.fetchone()[0]
+                conn.close()
+                
+                await callback.message.answer(
+                    f"📊 Статистика [{bot_name}]:\n\n"
+                    f"👥 Всего пользователей: {total}\n"
+                    f"✅ Подписано: {subscribed}\n"
+                    f"🟢 Активных за 24ч: {active_24h}\n"
+                    f"🟢 Активных за 7 дней: {active_7d}\n"
+                    f"📊 С указанным источником: {with_source}"
                 )
         
         # Обработчики кнопок меню для ROI бота
