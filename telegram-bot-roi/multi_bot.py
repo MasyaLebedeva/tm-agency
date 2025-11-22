@@ -400,8 +400,11 @@ class BotManager:
         logger.info(f"✅ Обработчики для {bot_name} зарегистрированы")
     
     async def set_webhooks(self):
-        """Установка webhook для всех ботов"""
-        logger.info("🔧 Начало установки webhook для всех ботов...")
+        """Установка webhook для всех ботов - ВЕРСИЯ С ПРЯМЫМИ API ВЫЗОВАМИ"""
+        logger.info("=" * 60)
+        logger.info("🔧 НАЧАЛО УСТАНОВКИ WEBHOOK - ВЕРСИЯ С ПРЯМЫМИ API ВЫЗОВАМИ")
+        logger.info("=" * 60)
+        
         if not WEBHOOK_URL:
             logger.warning("WEBHOOK_URL не установлен. Используется polling режим.")
             return
@@ -412,24 +415,27 @@ class BotManager:
         
         logger.info(f"🌐 Базовый URL webhook: {webhook_base}")
         
-        for bot_name, bot in self.bots.items():
+        for bot_name, bot_instance in self.bots.items():
             logger.info(f"🔧 Обработка бота {bot_name}...")
             try:
+                # ВАЖНО: Используем config.token, НЕ bot.token!
                 config = self.configs[bot_name]
-                logger.info(f"🔧 Конфиг для {bot_name} получен, токен: {config.token[:10] if config.token else 'НЕТ'}...")
+                token = config.token  # Используем токен из конфига
+                
+                logger.info(f"🔧 Конфиг для {bot_name} получен, токен: {token[:10] if token else 'НЕТ'}...")
                 
                 # Проверяем, что токен установлен
-                if not config.token:
+                if not token:
                     logger.warning(f"⚠️ Токен для {bot_name} не установлен, пропускаю webhook")
                     continue
                 
-                webhook_path = f"{webhook_base}/webhook/{config.token}"
+                webhook_path = f"{webhook_base}/webhook/{token}"
                 logger.info(f"🔧 Установка webhook для {bot_name}: {webhook_path[:50]}...")
                 
                 # Удаляем старый webhook через прямой API вызов
                 try:
                     async with ClientSession() as session:
-                        delete_url = f"https://api.telegram.org/bot{config.token}/deleteWebhook"
+                        delete_url = f"https://api.telegram.org/bot{token}/deleteWebhook"
                         async with session.post(delete_url) as resp:
                             if resp.status == 200:
                                 logger.info(f"✅ Старый webhook для {bot_name} удалён")
@@ -440,7 +446,7 @@ class BotManager:
                 
                 # Устанавливаем новый webhook через прямой API вызов
                 async with ClientSession() as session:
-                    set_url = f"https://api.telegram.org/bot{config.token}/setWebhook"
+                    set_url = f"https://api.telegram.org/bot{token}/setWebhook"
                     data = {
                         "url": webhook_path,
                         "allowed_updates": ["message", "callback_query"]
@@ -454,7 +460,7 @@ class BotManager:
                 
                 # Проверяем установку webhook
                 async with ClientSession() as session:
-                    get_url = f"https://api.telegram.org/bot{config.token}/getWebhookInfo"
+                    get_url = f"https://api.telegram.org/bot{token}/getWebhookInfo"
                     async with session.get(get_url) as resp:
                         webhook_info = await resp.json()
                         if webhook_info.get("ok") and webhook_info.get("result", {}).get("url") == webhook_path:
@@ -467,6 +473,10 @@ class BotManager:
                 logger.error(f"❌ Ошибка при установке webhook для {bot_name}: {e}")
                 logger.error(f"Тип ошибки: {type(e).__name__}")
                 logger.error(f"Трассировка: {traceback.format_exc()}")
+        
+        logger.info("=" * 60)
+        logger.info("🔧 ЗАВЕРШЕНИЕ УСТАНОВКИ WEBHOOK")
+        logger.info("=" * 60)
     
     async def process_webhook(self, token: str, update_data: dict) -> web.Response:
         """Обработка webhook запроса"""
