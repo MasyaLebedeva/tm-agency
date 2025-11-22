@@ -58,20 +58,58 @@ else:
         DATA_DIR = BASE_DIR
         logger.info(f"✅ Используется BASE_DIR для данных: {DATA_DIR}")
 
+# Функция для получения полного URL PostgreSQL
+def get_postgresql_url():
+    """Получить полный URL для подключения к PostgreSQL"""
+    database_url = os.getenv("DATABASE_URL", "")
+    
+    # Если это полный URL (начинается с postgresql://)
+    if database_url.startswith("postgresql://") or database_url.startswith("postgres://"):
+        logger.info(f"✅ DATABASE_URL - полный URL: {database_url[:50]}...")
+        return database_url
+    
+    # Если это только хост:порт, собираем URL из переменных окружения
+    if database_url and ":" in database_url:
+        logger.info(f"🔍 DATABASE_URL - хост:порт: {database_url}")
+        # Пробуем получить остальные параметры из переменных окружения
+        pg_user = os.getenv("PGUSER", os.getenv("POSTGRES_USER", "postgres"))
+        pg_password = os.getenv("PGPASSWORD", os.getenv("POSTGRES_PASSWORD", ""))
+        pg_database = os.getenv("PGDATABASE", os.getenv("POSTGRES_DB", "railway"))
+        
+        # Если есть пароль, собираем URL
+        if pg_password:
+            host, port = database_url.split(":", 1)
+            full_url = f"postgresql://{pg_user}:{pg_password}@{host}:{port}/{pg_database}"
+            logger.info(f"✅ Собран полный URL PostgreSQL: {full_url[:50]}...")
+            return full_url
+        else:
+            logger.warning("⚠️ Не найден пароль PostgreSQL в переменных окружения")
+            return None
+    
+    # Проверяем отдельные переменные PostgreSQL
+    pg_host = os.getenv("PGHOST", "")
+    pg_port = os.getenv("PGPORT", "5432")
+    pg_user = os.getenv("PGUSER", os.getenv("POSTGRES_USER", ""))
+    pg_password = os.getenv("PGPASSWORD", os.getenv("POSTGRES_PASSWORD", ""))
+    pg_database = os.getenv("PGDATABASE", os.getenv("POSTGRES_DB", ""))
+    
+    if pg_host and pg_user and pg_password and pg_database:
+        full_url = f"postgresql://{pg_user}:{pg_password}@{pg_host}:{pg_port}/{pg_database}"
+        logger.info(f"✅ Собран полный URL PostgreSQL из отдельных переменных: {full_url[:50]}...")
+        return full_url
+    
+    return None
+
 # Функция для проверки использования PostgreSQL (вызывается во время выполнения)
 def use_postgresql():
     """Проверяет, используется ли PostgreSQL"""
-    database_url = os.getenv("DATABASE_URL", "")
+    database_url = get_postgresql_url()
     if database_url:
-        logger.info(f"🔍 DATABASE_URL найден: {database_url[:30]}... (длина: {len(database_url)})")
-        if database_url.startswith("postgres"):
-            logger.info("✅ DATABASE_URL указывает на PostgreSQL")
-            return True
-        else:
-            logger.warning(f"⚠️ DATABASE_URL не начинается с 'postgres': {database_url[:50]}")
+        logger.info("✅ PostgreSQL доступен")
+        return True
     else:
-        logger.warning("⚠️ DATABASE_URL не установлен в переменных окружения")
-    return False
+        logger.info("ℹ️ PostgreSQL недоступен, используется SQLite")
+        return False
 
 # Глобальная переменная для отслеживания первого подключения
 _postgresql_logged = False
@@ -85,9 +123,13 @@ def get_db_connection(bot_name: str):
         if not _postgresql_logged:
             logger.info("✅ Используется PostgreSQL для хранения данных")
             _postgresql_logged = True
-        database_url = os.getenv("DATABASE_URL", "")
-        conn = psycopg2.connect(database_url)
-        return conn
+        database_url = get_postgresql_url()
+        if database_url:
+            conn = psycopg2.connect(database_url)
+            return conn
+        else:
+            logger.error("❌ Не удалось получить URL PostgreSQL")
+            raise Exception("PostgreSQL URL не доступен")
     else:
         # Используем SQLite
         if not _postgresql_logged:
