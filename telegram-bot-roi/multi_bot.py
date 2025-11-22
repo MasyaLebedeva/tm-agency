@@ -5,6 +5,8 @@ Multi-Bot Manager - Управление несколькими Telegram бот�
 import os
 import logging
 import sqlite3
+import psycopg2
+from psycopg2.extras import RealDictCursor
 import io
 from datetime import datetime, timedelta
 from aiogram import Bot, Dispatcher
@@ -15,8 +17,8 @@ import asyncio
 from aiogram.contrib.fsm_storage.memory import MemoryStorage
 from aiohttp import web, ClientSession
 from dotenv import load_dotenv
-from typing import Dict
-from urllib.parse import parse_qs
+from typing import Dict, Optional
+from urllib.parse import parse_qs, urlparse
 
 # Загружаем переменные окружения
 load_dotenv()
@@ -50,6 +52,59 @@ else:
         logger.warning(f"⚠️ Не удалось создать /app/data, используем {BASE_DIR}: {e}")
         DATA_DIR = BASE_DIR
         logger.info(f"✅ Используется BASE_DIR для данных: {DATA_DIR}")
+
+# Проверяем наличие PostgreSQL
+DATABASE_URL = os.getenv("DATABASE_URL", "")
+USE_POSTGRESQL = bool(DATABASE_URL and DATABASE_URL.startswith("postgres"))
+
+if USE_POSTGRESQL:
+    logger.info("✅ Используется PostgreSQL для хранения данных")
+else:
+    logger.info("ℹ️ Используется SQLite для хранения данных")
+
+def get_db_connection(bot_name: str):
+    """Получить подключение к базе данных (PostgreSQL или SQLite)"""
+    if USE_POSTGRESQL:
+        # Используем PostgreSQL
+        conn = psycopg2.connect(DATABASE_URL)
+        return conn
+    else:
+        # Используем SQLite
+        db_path = os.path.join(DATA_DIR, f'{bot_name.lower()}.db')
+        conn = sqlite3.connect(db_path)
+        return conn
+
+def get_table_name(bot_name: str, table_type: str = "users"):
+    """Получить имя таблицы для бота"""
+    return f"{bot_name.lower()}_{table_type}"
+
+def execute_sql(bot_name: str, query: str, params: tuple = None, fetch: bool = False):
+    """Универсальная функция для выполнения SQL запросов (PostgreSQL или SQLite)"""
+    conn = get_db_connection(bot_name)
+    c = conn.cursor()
+    
+    # Заменяем ? на %s для PostgreSQL
+    if USE_POSTGRESQL and params:
+        query = query.replace('?', '%s')
+    
+    try:
+        if params:
+            c.execute(query, params)
+        else:
+            c.execute(query)
+        
+        if fetch:
+            result = c.fetchall()
+        else:
+            result = None
+        
+        conn.commit()
+        return result, c
+    except Exception as e:
+        conn.rollback()
+        raise e
+    finally:
+        conn.close()
 
 
 class BotConfig:
@@ -140,48 +195,81 @@ class BotManager:
     def init_db(self, bot_name: str, config: BotConfig):
         """Инициализация БД для бота"""
         try:
-            conn = sqlite3.connect(config.db_path)
+            conn = get_db_connection(bot_name)
             c = conn.cursor()
             
-            c.execute('''CREATE TABLE IF NOT EXISTS users
-                         (user_id INTEGER PRIMARY KEY,
-                          username TEXT,
-                          first_name TEXT,
-                          last_name TEXT,
-                          language_code TEXT,
-                          joined_at TIMESTAMP,
-                          last_activity TIMESTAMP,
-                          is_subscribed INTEGER DEFAULT 0,
-                          source TEXT,
-                          utm_source TEXT,
-                          utm_medium TEXT,
-                          utm_campaign TEXT,
-                          referrer_id INTEGER,
-                          referrals_count INTEGER DEFAULT 0)''')
+            # Используем разные имена таблиц для каждого бота
+            users_table = f"{bot_name.lower()}_users"
+            stats_table = f"{bot_name.lower()}_stats"
             
-            c.execute('''CREATE TABLE IF NOT EXISTS stats
-                         (id INTEGER PRIMARY KEY AUTOINCREMENT,
-                          user_id INTEGER,
-                          action TEXT,
-                          timestamp TIMESTAMP,
-                          metadata TEXT,
-                          FOREIGN KEY(user_id) REFERENCES users(user_id))''')
+            if USE_POSTGRESQL:
+                # PostgreSQL синтаксис
+                c.execute(f'''CREATE TABLE IF NOT EXISTS {users_table}
+                             (user_id BIGINT PRIMARY KEY,
+                              username TEXT,
+                              first_name TEXT,
+                              last_name TEXT,
+                              language_code TEXT,
+                              joined_at TIMESTAMP,
+                              last_activity TIMESTAMP,
+                              is_subscribed INTEGER DEFAULT 0,
+                              source TEXT,
+                              utm_source TEXT,
+                              utm_medium TEXT,
+                              utm_campaign TEXT,
+                              referrer_id BIGINT,
+                              referrals_count INTEGER DEFAULT 0)''')
+                
+                c.execute(f'''CREATE TABLE IF NOT EXISTS {stats_table}
+                             (id SERIAL PRIMARY KEY,
+                              user_id BIGINT,
+                              action TEXT,
+                              timestamp TIMESTAMP,
+                              metadata TEXT,
+                              FOREIGN KEY(user_id) REFERENCES {users_table}(user_id))''')
+            else:
+                # SQLite синтаксис
+                c.execute(f'''CREATE TABLE IF NOT EXISTS {users_table}
+                             (user_id INTEGER PRIMARY KEY,
+                              username TEXT,
+                              first_name TEXT,
+                              last_name TEXT,
+                              language_code TEXT,
+                              joined_at TIMESTAMP,
+                              last_activity TIMESTAMP,
+                              is_subscribed INTEGER DEFAULT 0,
+                              source TEXT,
+                              utm_source TEXT,
+                              utm_medium TEXT,
+                              utm_campaign TEXT,
+                              referrer_id INTEGER,
+                              referrals_count INTEGER DEFAULT 0)''')
+                
+                c.execute(f'''CREATE TABLE IF NOT EXISTS {stats_table}
+                             (id INTEGER PRIMARY KEY AUTOINCREMENT,
+                              user_id INTEGER,
+                              action TEXT,
+                              timestamp TIMESTAMP,
+                              metadata TEXT,
+                              FOREIGN KEY(user_id) REFERENCES {users_table}(user_id))''')
             
             # Проверяем количество пользователей в базе
-            c.execute('SELECT COUNT(*) FROM users')
+            c.execute(f'SELECT COUNT(*) FROM {users_table}')
             existing_users = c.fetchone()[0]
             
             conn.commit()
             conn.close()
-            logger.info(f"✅ БД для {bot_name} инициализирована: {config.db_path}")
+            
+            logger.info(f"✅ БД для {bot_name} инициализирована")
             logger.info(f"📊 Пользователей в базе {bot_name}: {existing_users}")
             
-            # Проверяем, существует ли файл базы данных
-            if os.path.exists(config.db_path):
-                file_size = os.path.getsize(config.db_path)
-                logger.info(f"📁 Размер файла БД {bot_name}: {file_size} байт")
-            else:
-                logger.warning(f"⚠️ Файл БД {bot_name} не существует: {config.db_path}")
+            if not USE_POSTGRESQL:
+                # Проверяем, существует ли файл базы данных (только для SQLite)
+                if os.path.exists(config.db_path):
+                    file_size = os.path.getsize(config.db_path)
+                    logger.info(f"📁 Размер файла БД {bot_name}: {file_size} байт")
+                else:
+                    logger.warning(f"⚠️ Файл БД {bot_name} не существует: {config.db_path}")
         except Exception as e:
             logger.error(f"❌ Ошибка при инициализации БД для {bot_name}: {e}")
             logger.error(f"Трассировка: {traceback.format_exc()}")
@@ -215,18 +303,32 @@ class BotManager:
             Bot.set_current(bot)
             try:
                 # Добавляем пользователя в БД
-                conn = sqlite3.connect(config.db_path)
+                conn = get_db_connection(bot_name)
                 c = conn.cursor()
-                c.execute('''INSERT OR IGNORE INTO users 
-                            (user_id, username, first_name, last_name, language_code, joined_at, last_activity)
-                            VALUES (?, ?, ?, ?, ?, ?, ?)''',
-                         (user_id, message.from_user.username, message.from_user.first_name,
-                          message.from_user.last_name, message.from_user.language_code, datetime.now(), datetime.now()))
-                c.execute('UPDATE users SET last_activity = ? WHERE user_id = ?', (datetime.now(), user_id))
+                users_table = get_table_name(bot_name, "users")
+                
+                if USE_POSTGRESQL:
+                    # PostgreSQL синтаксис
+                    c.execute(f'''INSERT INTO {users_table} 
+                                (user_id, username, first_name, last_name, language_code, joined_at, last_activity)
+                                VALUES (%s, %s, %s, %s, %s, %s, %s)
+                                ON CONFLICT (user_id) DO NOTHING''',
+                             (user_id, message.from_user.username, message.from_user.first_name,
+                              message.from_user.last_name, message.from_user.language_code, datetime.now(), datetime.now()))
+                    c.execute(f'UPDATE {users_table} SET last_activity = %s WHERE user_id = %s', (datetime.now(), user_id))
+                else:
+                    # SQLite синтаксис
+                    c.execute(f'''INSERT OR IGNORE INTO {users_table} 
+                                (user_id, username, first_name, last_name, language_code, joined_at, last_activity)
+                                VALUES (?, ?, ?, ?, ?, ?, ?)''',
+                             (user_id, message.from_user.username, message.from_user.first_name,
+                              message.from_user.last_name, message.from_user.language_code, datetime.now(), datetime.now()))
+                    c.execute(f'UPDATE {users_table} SET last_activity = ? WHERE user_id = ?', (datetime.now(), user_id))
+                
                 conn.commit()
                 
                 # Проверяем количество пользователей в базе
-                c.execute('SELECT COUNT(*) FROM users')
+                c.execute(f'SELECT COUNT(*) FROM {users_table}')
                 total_users = c.fetchone()[0]
                 conn.close()
                 
@@ -280,9 +382,13 @@ class BotManager:
                     return
                 
                 # Обновляем активность
-                conn = sqlite3.connect(config.db_path)
+                conn = get_db_connection(bot_name)
                 c = conn.cursor()
-                c.execute('UPDATE users SET last_activity = ? WHERE user_id = ?', (datetime.now(), user_id))
+                users_table = get_table_name(bot_name, "users")
+                if USE_POSTGRESQL:
+                    c.execute(f'UPDATE {users_table} SET last_activity = %s WHERE user_id = %s', (datetime.now(), user_id))
+                else:
+                    c.execute(f'UPDATE {users_table} SET last_activity = ? WHERE user_id = ?', (datetime.now(), user_id))
                 conn.commit()
                 conn.close()
                 
@@ -292,10 +398,14 @@ class BotManager:
                 logger.info(f"[{bot_name}] 📊 Статус подписки пользователя {user_id}: {member.status} -> подписан: {is_subscribed}")
                 
                 # Обновляем статус подписки в БД
-                conn = sqlite3.connect(config.db_path)
+                conn = get_db_connection(bot_name)
                 c = conn.cursor()
-                c.execute('UPDATE users SET is_subscribed = ? WHERE user_id = ?',
-                         (1 if is_subscribed else 0, user_id))
+                if USE_POSTGRESQL:
+                    c.execute(f'UPDATE {users_table} SET is_subscribed = %s WHERE user_id = %s',
+                             (1 if is_subscribed else 0, user_id))
+                else:
+                    c.execute(f'UPDATE {users_table} SET is_subscribed = ? WHERE user_id = ?',
+                             (1 if is_subscribed else 0, user_id))
                 conn.commit()
                 conn.close()
                 
@@ -372,13 +482,17 @@ class BotManager:
                     return
                 
                 # Простая статистика
-                conn = sqlite3.connect(config.db_path)
+                conn = get_db_connection(bot_name)
                 c = conn.cursor()
-                c.execute('SELECT COUNT(*) FROM users')
+                users_table = get_table_name(bot_name, "users")
+                c.execute(f'SELECT COUNT(*) FROM {users_table}')
                 total = c.fetchone()[0]
-                c.execute('SELECT COUNT(*) FROM users WHERE is_subscribed = 1')
+                c.execute(f'SELECT COUNT(*) FROM {users_table} WHERE is_subscribed = 1')
                 subscribed = c.fetchone()[0]
-                c.execute("SELECT COUNT(*) FROM users WHERE last_activity > datetime('now','-1 day')")
+                if USE_POSTGRESQL:
+                    c.execute(f"SELECT COUNT(*) FROM {users_table} WHERE last_activity > NOW() - INTERVAL '1 day'")
+                else:
+                    c.execute(f"SELECT COUNT(*) FROM {users_table} WHERE last_activity > datetime('now','-1 day')")
                 active = c.fetchone()[0]
                 conn.close()
                 
@@ -409,9 +523,10 @@ class BotManager:
                 
                 await callback.answer("⏳ Загружаю пользователей...")
                 
-                conn = sqlite3.connect(config.db_path)
+                conn = get_db_connection(bot_name)
                 c = conn.cursor()
-                c.execute('SELECT user_id, username, first_name, is_subscribed, joined_at FROM users ORDER BY joined_at DESC LIMIT 50')
+                users_table = get_table_name(bot_name, "users")
+                c.execute(f'SELECT user_id, username, first_name, is_subscribed, joined_at FROM {users_table} ORDER BY joined_at DESC LIMIT 50')
                 users = c.fetchall()
                 conn.close()
                 
@@ -444,9 +559,10 @@ class BotManager:
                 
                 await callback.answer("⏳ Формирую экспорт...")
                 
-                conn = sqlite3.connect(config.db_path)
+                conn = get_db_connection(bot_name)
                 c = conn.cursor()
-                c.execute('SELECT * FROM users')
+                users_table = get_table_name(bot_name, "users")
+                c.execute(f'SELECT * FROM {users_table}')
                 users = c.fetchall()
                 conn.close()
                 
@@ -475,17 +591,24 @@ class BotManager:
                 
                 await callback.answer("⏳ Загружаю статистику...")
                 
-                conn = sqlite3.connect(config.db_path)
+                conn = get_db_connection(bot_name)
                 c = conn.cursor()
-                c.execute('SELECT COUNT(*) FROM users')
+                users_table = get_table_name(bot_name, "users")
+                c.execute(f'SELECT COUNT(*) FROM {users_table}')
                 total = c.fetchone()[0]
-                c.execute('SELECT COUNT(*) FROM users WHERE is_subscribed = 1')
+                c.execute(f'SELECT COUNT(*) FROM {users_table} WHERE is_subscribed = 1')
                 subscribed = c.fetchone()[0]
-                c.execute("SELECT COUNT(*) FROM users WHERE last_activity > datetime('now','-1 day')")
-                active_24h = c.fetchone()[0]
-                c.execute("SELECT COUNT(*) FROM users WHERE last_activity > datetime('now','-7 days')")
-                active_7d = c.fetchone()[0]
-                c.execute("SELECT COUNT(*) FROM users WHERE source IS NOT NULL AND source != ''")
+                if USE_POSTGRESQL:
+                    c.execute(f"SELECT COUNT(*) FROM {users_table} WHERE last_activity > NOW() - INTERVAL '1 day'")
+                    active_24h = c.fetchone()[0]
+                    c.execute(f"SELECT COUNT(*) FROM {users_table} WHERE last_activity > NOW() - INTERVAL '7 days'")
+                    active_7d = c.fetchone()[0]
+                else:
+                    c.execute(f"SELECT COUNT(*) FROM {users_table} WHERE last_activity > datetime('now','-1 day')")
+                    active_24h = c.fetchone()[0]
+                    c.execute(f"SELECT COUNT(*) FROM {users_table} WHERE last_activity > datetime('now','-7 days')")
+                    active_7d = c.fetchone()[0]
+                c.execute(f"SELECT COUNT(*) FROM {users_table} WHERE source IS NOT NULL AND source != ''")
                 with_source = c.fetchone()[0]
                 conn.close()
                 
@@ -504,9 +627,13 @@ class BotManager:
             async def handle_referrals_button(message: Message):
                 Bot.set_current(bot)
                 user_id = message.from_user.id
-                conn = sqlite3.connect(config.db_path)
+                conn = get_db_connection(bot_name)
                 c = conn.cursor()
-                c.execute('SELECT referrals_count FROM users WHERE user_id = ?', (user_id,))
+                users_table = get_table_name(bot_name, "users")
+                if USE_POSTGRESQL:
+                    c.execute(f'SELECT referrals_count FROM {users_table} WHERE user_id = %s', (user_id,))
+                else:
+                    c.execute(f'SELECT referrals_count FROM {users_table} WHERE user_id = ?', (user_id,))
                 result = c.fetchone()
                 referrals_count = result[0] if result else 0
                 conn.close()
