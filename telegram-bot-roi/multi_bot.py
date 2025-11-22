@@ -173,6 +173,7 @@ class BotManager:
         @dp.message_handler(commands=["start"])
         async def cmd_start(message: Message):
             user_id = message.from_user.id
+            logger.info(f"[{bot_name}] 📨 Получена команда /start от пользователя {user_id}")
             try:
                 # Добавляем пользователя в БД
                 conn = sqlite3.connect(config.db_path)
@@ -185,6 +186,7 @@ class BotManager:
                 c.execute('UPDATE users SET last_activity = ? WHERE user_id = ?', (datetime.now(), user_id))
                 conn.commit()
                 conn.close()
+                logger.info(f"[{bot_name}] ✅ Пользователь {user_id} добавлен/обновлён в БД")
                 
                 # Приветственное сообщение в зависимости от типа бота
                 if is_gigtest_bot:
@@ -204,19 +206,27 @@ class BotManager:
                     [InlineKeyboardButton(text="✅ Проверить подписку", callback_data="check_subscription")]
                 ])
                 
+                logger.info(f"[{bot_name}] 📤 Отправка приветственного сообщения пользователю {user_id}")
                 await bot.send_message(user_id, welcome_text, reply_markup=markup)
+                logger.info(f"[{bot_name}] ✅ Приветственное сообщение отправлено пользователю {user_id}")
             except Exception as e:
-                logger.error(f"[{bot_name}] Ошибка в /start: {e}")
+                logger.error(f"[{bot_name}] ❌ Ошибка в /start: {e}")
                 logger.error(f"Трассировка: {traceback.format_exc()}")
+                try:
+                    await bot.send_message(user_id, "❌ Произошла ошибка. Пожалуйста, попробуйте позже.")
+                except:
+                    pass
         
         # Обработчик проверки подписки
         @dp.callback_query_handler(lambda c: c.data == "check_subscription")
         async def process_subscription(callback: CallbackQuery):
             user_id = callback.from_user.id
+            logger.info(f"[{bot_name}] 🔍 Проверка подписки для пользователя {user_id}")
             try:
                 await callback.answer("⏳ Проверяю подписку...")
                 
                 if not config.channel_id:
+                    logger.warning(f"[{bot_name}] ⚠️ CHANNEL_ID не настроен для {bot_name}")
                     await callback.answer("❌ Канал не настроен", show_alert=True)
                     return
                 
@@ -227,8 +237,10 @@ class BotManager:
                 conn.commit()
                 conn.close()
                 
+                logger.info(f"[{bot_name}] 🔍 Проверяю подписку пользователя {user_id} в канале {config.channel_id}")
                 member = await bot.get_chat_member(config.channel_id, user_id)
                 is_subscribed = member.status in ["member", "administrator", "creator"]
+                logger.info(f"[{bot_name}] 📊 Статус подписки пользователя {user_id}: {member.status} -> подписан: {is_subscribed}")
                 
                 # Обновляем статус подписки в БД
                 conn = sqlite3.connect(config.db_path)
@@ -239,17 +251,21 @@ class BotManager:
                 conn.close()
                 
                 if is_subscribed:
+                    logger.info(f"[{bot_name}] ✅ Пользователь {user_id} подписан, отправляю материалы...")
                     await callback.answer("✅ Отлично! Отправляю материалы...")
                     
                     # Отправляем материалы в зависимости от типа бота
                     if is_gigtest_bot:
                         # Gigtest бот - отправляем Google документ
+                        logger.info(f"[{bot_name}] 📤 Отправка материалов Gigtest бота пользователю {user_id}")
                         materials_text = (
                             "🎉 Спасибо за подписку. Держи файл с ответами на тесты: "
                         )
                         await bot.send_message(user_id, materials_text + config.google_doc_link)
+                        logger.info(f"[{bot_name}] ✅ Материалы Gigtest бота отправлены пользователю {user_id}")
                     else:
                         # ROI бот - отправляем таблицу и видео
+                        logger.info(f"[{bot_name}] 📤 Отправка материалов ROI бота пользователю {user_id}")
                         materials_text = (
                             "🎉 Спасибо за подписку!\n\n"
                             "📊 Вот твой калькулятор ROI для Telegram-канала:\n\n"
@@ -280,7 +296,9 @@ class BotManager:
                             resize_keyboard=True
                         )
                         await bot.send_message(user_id, "Выбери действие из меню:", reply_markup=menu)
+                        logger.info(f"[{bot_name}] ✅ Материалы ROI бота отправлены пользователю {user_id}")
                 else:
+                    logger.info(f"[{bot_name}] ❌ Пользователь {user_id} не подписан на канал")
                     await callback.answer("❌ Подписка не найдена", show_alert=True)
                     markup = InlineKeyboardMarkup(inline_keyboard=[
                         [InlineKeyboardButton(text="📢 Подписаться на канал", url=config.channel_link)],
@@ -288,9 +306,12 @@ class BotManager:
                     ])
                     await bot.send_message(user_id, "Подпишись на канал, чтобы получить материалы!", reply_markup=markup)
             except Exception as e:
-                logger.error(f"[{bot_name}] Ошибка при проверке подписки: {e}")
+                logger.error(f"[{bot_name}] ❌ Ошибка при проверке подписки для пользователя {user_id}: {e}")
                 logger.error(f"Трассировка: {traceback.format_exc()}")
-                await callback.answer("❌ Ошибка при проверке", show_alert=True)
+                try:
+                    await callback.answer("❌ Ошибка при проверке", show_alert=True)
+                except:
+                    pass
         
         # Обработчик /admin (только для ROI бота или если есть admin_ids)
         if config.admin_ids:
@@ -319,12 +340,57 @@ class BotManager:
                     f"🟢 Активных за сутки: {active}"
                 )
         
+        # Обработчики кнопок меню для ROI бота
+        if is_roi_bot:
+            @dp.message_handler(lambda m: m.text == "🎁 Реферальная программа")
+            async def handle_referrals_button(message: Message):
+                user_id = message.from_user.id
+                conn = sqlite3.connect(config.db_path)
+                c = conn.cursor()
+                c.execute('SELECT referrals_count FROM users WHERE user_id = ?', (user_id,))
+                result = c.fetchone()
+                referrals_count = result[0] if result else 0
+                conn.close()
+                
+                # Получаем username бота
+                bot_info = await bot.get_me()
+                bot_username = bot_info.username or "your_bot"
+                referral_link = f"https://t.me/{bot_username}?start=ref{user_id}"
+                
+                await bot.send_message(
+                    user_id,
+                    f"🎁 <b>Реферальная программа</b>\n\n"
+                    f"👥 Твои рефералы: {referrals_count}\n\n"
+                    f"🔗 Твоя реферальная ссылка:\n{referral_link}\n\n"
+                    f"💡 За каждого друга, который подпишется через твою ссылку, ты получишь бонус!",
+                    parse_mode='HTML'
+                )
+            
+            @dp.message_handler(lambda m: m.text == "💬 Задать вопрос")
+            async def handle_question_button(message: Message):
+                user_id = message.from_user.id
+                await bot.send_message(
+                    user_id,
+                    f"💬 <b>Задать вопрос</b>\n\n"
+                    f"Если у тебя есть вопросы по использованию калькулятора или нужна помощь, "
+                    f"напиши нам в канале: {config.channel_link}",
+                    parse_mode='HTML'
+                )
+            
+            @dp.message_handler(lambda m: m.text == "🌐 Сайт агентства T&M")
+            async def handle_website_button(message: Message):
+                user_id = message.from_user.id
+                await bot.send_message(
+                    user_id,
+                    f"🌐 <b>T&M Agency</b>\n\n"
+                    f"Мы помогаем продвигать Telegram-каналы и создавать эффективные маркетинговые кампании.\n\n"
+                    f"🔗 Наш сайт: https://www.tmads.ru/",
+                    parse_mode='HTML'
+                )
+        
         # Обработчик неизвестных сообщений
         @dp.message_handler()
         async def handle_unknown(message: Message):
-            # Игнорируем кнопки меню для ROI бота
-            if message.text in ["🎁 Реферальная программа", "💬 Задать вопрос", "🌐 Сайт агентства T&M"]:
-                return
             await bot.send_message(message.from_user.id, "Используй /start для начала работы")
         
         logger.info(f"✅ Обработчики для {bot_name} зарегистрированы")
@@ -352,6 +418,8 @@ class BotManager:
     
     async def process_webhook(self, token: str, update_data: dict) -> web.Response:
         """Обработка webhook запроса"""
+        logger.info(f"📥 Получен webhook для токена: {token[:10]}...")
+        
         # Находим бота по токену
         bot_name = None
         for name, config in self.configs.items():
@@ -360,16 +428,27 @@ class BotManager:
                 break
         
         if not bot_name:
-            logger.warning(f"Бот с токеном {token[:10]}... не найден")
+            logger.warning(f"❌ Бот с токеном {token[:10]}... не найден")
+            logger.warning(f"Доступные токены: {[c.token[:10] + '...' for c in self.configs.values()]}")
             return web.Response(status=404, text="Bot not found")
+        
+        logger.info(f"✅ Найден бот: {bot_name}")
         
         try:
             dp = self.dispatchers[bot_name]
+            bot = self.bots[bot_name]
+            
+            # Создаём Update объект
             update = Update(**update_data)
+            logger.info(f"📨 Обработка обновления для {bot_name}: {update.update_id}")
+            
+            # Обрабатываем обновление через dispatcher
             await dp.process_update(update)
+            
+            logger.info(f"✅ Обновление {update.update_id} обработано успешно")
             return web.Response(status=200, text="OK")
         except Exception as e:
-            logger.error(f"[{bot_name}] Ошибка при обработке webhook: {e}")
+            logger.error(f"❌ [{bot_name}] Ошибка при обработке webhook: {e}")
             logger.error(f"Трассировка: {traceback.format_exc()}")
             return web.Response(status=500, text="Internal error")
 
@@ -397,14 +476,18 @@ async def webhook_handler(request):
     # Извлекаем токен из URL: /webhook/{token}
     token = request.match_info.get('token', '')
     
+    logger.info(f"🌐 Получен webhook запрос: {request.method} {request.path_qs}")
+    
     if not token:
+        logger.error("❌ Токен не найден в URL")
         return web.Response(status=400, text="Token required")
     
     try:
         update_data = await request.json()
+        logger.info(f"📦 Данные обновления: {update_data.get('update_id', 'unknown')}")
         return await bot_manager.process_webhook(token, update_data)
     except Exception as e:
-        logger.error(f"Ошибка при обработке webhook: {e}")
+        logger.error(f"❌ Ошибка при обработке webhook: {e}")
         logger.error(f"Трассировка: {traceback.format_exc()}")
         return web.Response(status=500, text="Internal error")
 
