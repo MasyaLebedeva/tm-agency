@@ -147,11 +147,24 @@ class BotManager:
                           metadata TEXT,
                           FOREIGN KEY(user_id) REFERENCES users(user_id))''')
             
+            # Проверяем количество пользователей в базе
+            c.execute('SELECT COUNT(*) FROM users')
+            existing_users = c.fetchone()[0]
+            
             conn.commit()
             conn.close()
             logger.info(f"✅ БД для {bot_name} инициализирована: {config.db_path}")
+            logger.info(f"📊 Пользователей в базе {bot_name}: {existing_users}")
+            
+            # Проверяем, существует ли файл базы данных
+            if os.path.exists(config.db_path):
+                file_size = os.path.getsize(config.db_path)
+                logger.info(f"📁 Размер файла БД {bot_name}: {file_size} байт")
+            else:
+                logger.warning(f"⚠️ Файл БД {bot_name} не существует: {config.db_path}")
         except Exception as e:
             logger.error(f"❌ Ошибка при инициализации БД для {bot_name}: {e}")
+            logger.error(f"Трассировка: {traceback.format_exc()}")
     
     def register_handlers(self, bot_name: str, dp: Dispatcher, config: BotConfig):
         """Регистрация обработчиков для бота"""
