@@ -178,6 +178,8 @@ class BotManager:
         async def cmd_start(message: Message):
             user_id = message.from_user.id
             logger.info(f"[{bot_name}] 📨 Получена команда /start от пользователя {user_id}")
+            # Устанавливаем текущий экземпляр бота в контекст
+            Bot.set_current(bot)
             try:
                 # Добавляем пользователя в БД
                 conn = sqlite3.connect(config.db_path)
@@ -228,6 +230,8 @@ class BotManager:
             callback_id = callback.id
             logger.info(f"[{bot_name}] 🔍 CALLBACK ПОЛУЧЕН: check_subscription от пользователя {user_id}, callback_id={callback_id}")
             try:
+                # Устанавливаем текущий экземпляр бота в контекст
+                Bot.set_current(bot)
                 logger.info(f"[{bot_name}] 📤 Отправляю ответ на callback...")
                 await callback.answer("⏳ Проверяю подписку...")
                 logger.info(f"[{bot_name}] ✅ Ответ на callback отправлен")
@@ -324,6 +328,7 @@ class BotManager:
         if config.admin_ids:
             @dp.message_handler(commands=["admin"])
             async def cmd_admin(message: Message):
+                Bot.set_current(bot)
                 if message.from_user.id not in config.admin_ids:
                     await message.answer("⛔️ У вас нет доступа к админ-панели")
                     return
@@ -351,6 +356,7 @@ class BotManager:
         if is_roi_bot:
             @dp.message_handler(lambda m: m.text == "🎁 Реферальная программа")
             async def handle_referrals_button(message: Message):
+                Bot.set_current(bot)
                 user_id = message.from_user.id
                 conn = sqlite3.connect(config.db_path)
                 c = conn.cursor()
@@ -375,6 +381,7 @@ class BotManager:
             
             @dp.message_handler(lambda m: m.text == "💬 Задать вопрос")
             async def handle_question_button(message: Message):
+                Bot.set_current(bot)
                 user_id = message.from_user.id
                 await bot.send_message(
                     user_id,
@@ -386,6 +393,7 @@ class BotManager:
             
             @dp.message_handler(lambda m: m.text == "🌐 Сайт агентства T&M")
             async def handle_website_button(message: Message):
+                Bot.set_current(bot)
                 user_id = message.from_user.id
                 await bot.send_message(
                     user_id,
@@ -398,6 +406,7 @@ class BotManager:
         # Обработчик неизвестных сообщений
         @dp.message_handler()
         async def handle_unknown(message: Message):
+            Bot.set_current(bot)
             await bot.send_message(message.from_user.id, "Используй /start для начала работы")
         
         logger.info(f"✅ Обработчики для {bot_name} зарегистрированы")
@@ -461,16 +470,29 @@ class BotManager:
                         else:
                             logger.error(f"❌ Ошибка при установке webhook для {bot_name}: {result.get('description', 'Unknown error')}")
                 
+                # Ждём немного перед проверкой webhook
+                await asyncio.sleep(1)
+                
                 # Проверяем установку webhook
                 async with ClientSession() as session:
                     get_url = f"https://api.telegram.org/bot{token}/getWebhookInfo"
                     async with session.get(get_url) as resp:
                         webhook_info = await resp.json()
-                        if webhook_info.get("ok") and webhook_info.get("result", {}).get("url") == webhook_path:
-                            logger.info(f"✅ Webhook для {bot_name} подтверждён: {webhook_path}")
+                        if webhook_info.get("ok"):
+                            actual_url = webhook_info.get("result", {}).get("url", "")
+                            if actual_url == webhook_path:
+                                logger.info(f"✅ Webhook для {bot_name} подтверждён: {webhook_path}")
+                            else:
+                                logger.warning(f"⚠️ Webhook для {bot_name} не совпадает: ожидалось {webhook_path}, получено {actual_url}")
+                                # Пытаемся установить ещё раз
+                                logger.info(f"🔄 Повторная установка webhook для {bot_name}...")
+                                async with ClientSession() as retry_session:
+                                    async with retry_session.post(set_url, json=data) as retry_resp:
+                                        retry_result = await retry_resp.json()
+                                        if retry_result.get("ok"):
+                                            logger.info(f"✅ Webhook для {bot_name} установлен повторно")
                         else:
-                            actual_url = webhook_info.get("result", {}).get("url", "не установлен")
-                            logger.warning(f"⚠️ Webhook для {bot_name} не совпадает: ожидалось {webhook_path}, получено {actual_url}")
+                            logger.error(f"❌ Не удалось проверить webhook для {bot_name}: {webhook_info.get('description', 'Unknown error')}")
                     
             except Exception as e:
                 logger.error(f"❌ Ошибка при установке webhook для {bot_name}: {e}")
