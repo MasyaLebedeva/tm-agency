@@ -32,6 +32,18 @@ logger.info(f"📦 Версия кода: {CODE_VERSION}")
 BASE_DIR = os.path.dirname(os.path.abspath(__file__))
 WEBHOOK_URL = os.getenv("WEBHOOK_URL", "").strip()
 
+# Путь для хранения баз данных (используем Volume, если доступен)
+DATA_DIR = os.getenv("DATA_DIR", "/app/data")
+if not os.path.exists(DATA_DIR):
+    try:
+        os.makedirs(DATA_DIR, exist_ok=True)
+        logger.info(f"✅ Создана директория для данных: {DATA_DIR}")
+    except Exception as e:
+        logger.warning(f"⚠️ Не удалось создать {DATA_DIR}, используем {BASE_DIR}: {e}")
+        DATA_DIR = BASE_DIR
+else:
+    logger.info(f"✅ Используется директория для данных: {DATA_DIR}")
+
 
 class BotConfig:
     """Конфигурация для одного бота"""
@@ -71,7 +83,8 @@ class BotConfig:
         # Для Gigtest бота (Google документ)
         self.google_doc_link = safe_getenv(f"{bot_name}_GOOGLE_DOC_LINK", "")
         
-        self.db_path = os.path.join(BASE_DIR, f'{bot_name.lower()}.db')
+        # Используем DATA_DIR для постоянного хранения (Volume в Railway)
+        self.db_path = os.path.join(DATA_DIR, f'{bot_name.lower()}.db')
         
         if not self.token:
             logger.warning(f"⚠️ {bot_name}_TOKEN не установлен. Бот {bot_name} не будет запущен.")
