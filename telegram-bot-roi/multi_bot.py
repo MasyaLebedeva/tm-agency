@@ -32,17 +32,24 @@ logger.info(f"📦 Версия кода: {CODE_VERSION}")
 BASE_DIR = os.path.dirname(os.path.abspath(__file__))
 WEBHOOK_URL = os.getenv("WEBHOOK_URL", "").strip()
 
-# Путь для хранения баз данных (используем Volume, если доступен)
+# Путь для хранения баз данных
+# Сначала пробуем использовать Volume (если установлен DATA_DIR)
+# Если нет - используем /app/data, если не получается - используем BASE_DIR
 DATA_DIR = os.getenv("DATA_DIR", "/app/data")
-if not os.path.exists(DATA_DIR):
-    try:
-        os.makedirs(DATA_DIR, exist_ok=True)
-        logger.info(f"✅ Создана директория для данных: {DATA_DIR}")
-    except Exception as e:
-        logger.warning(f"⚠️ Не удалось создать {DATA_DIR}, используем {BASE_DIR}: {e}")
-        DATA_DIR = BASE_DIR
+if DATA_DIR != "/app/data" and os.path.exists(DATA_DIR):
+    # Volume установлен
+    logger.info(f"✅ Используется Volume для данных: {DATA_DIR}")
 else:
-    logger.info(f"✅ Используется директория для данных: {DATA_DIR}")
+    # Пробуем создать /app/data
+    try:
+        os.makedirs("/app/data", exist_ok=True)
+        DATA_DIR = "/app/data"
+        logger.info(f"✅ Используется директория для данных: {DATA_DIR}")
+    except Exception as e:
+        # Если не получается - используем BASE_DIR
+        logger.warning(f"⚠️ Не удалось создать /app/data, используем {BASE_DIR}: {e}")
+        DATA_DIR = BASE_DIR
+        logger.info(f"✅ Используется BASE_DIR для данных: {DATA_DIR}")
 
 
 class BotConfig:
