@@ -13,7 +13,7 @@ from aiogram.dispatcher.middlewares import BaseMiddleware
 import traceback
 import asyncio
 from aiogram.contrib.fsm_storage.memory import MemoryStorage
-from aiohttp import web
+from aiohttp import web, ClientSession
 from dotenv import load_dotenv
 from typing import Dict
 from urllib.parse import parse_qs
@@ -408,12 +408,55 @@ class BotManager:
         for bot_name, bot in self.bots.items():
             try:
                 config = self.configs[bot_name]
+                
+                # Проверяем, что токен установлен
+                if not config.token:
+                    logger.warning(f"⚠️ Токен для {bot_name} не установлен, пропускаю webhook")
+                    continue
+                
                 webhook_path = f"{webhook_base}/webhook/{config.token}"
-                await bot.delete_webhook()
-                await bot.set_webhook(webhook_path, allowed_updates=["message", "callback_query"])
-                logger.info(f"✅ Webhook для {bot_name} установлен: {webhook_path}")
+                logger.info(f"🔧 Установка webhook для {bot_name}: {webhook_path[:50]}...")
+                
+                # Удаляем старый webhook через прямой API вызов
+                try:
+                    async with ClientSession() as session:
+                        delete_url = f"https://api.telegram.org/bot{config.token}/deleteWebhook"
+                        async with session.post(delete_url) as resp:
+                            if resp.status == 200:
+                                logger.info(f"✅ Старый webhook для {bot_name} удалён")
+                            else:
+                                logger.warning(f"⚠️ Не удалось удалить старый webhook для {bot_name}: статус {resp.status}")
+                except Exception as e:
+                    logger.warning(f"⚠️ Ошибка при удалении старого webhook для {bot_name}: {e}")
+                
+                # Устанавливаем новый webhook через прямой API вызов
+                async with ClientSession() as session:
+                    set_url = f"https://api.telegram.org/bot{config.token}/setWebhook"
+                    data = {
+                        "url": webhook_path,
+                        "allowed_updates": ["message", "callback_query"]
+                    }
+                    async with session.post(set_url, json=data) as resp:
+                        result = await resp.json()
+                        if result.get("ok"):
+                            logger.info(f"✅ Webhook для {bot_name} установлен: {webhook_path}")
+                        else:
+                            logger.error(f"❌ Ошибка при установке webhook для {bot_name}: {result.get('description', 'Unknown error')}")
+                
+                # Проверяем установку webhook
+                async with ClientSession() as session:
+                    get_url = f"https://api.telegram.org/bot{config.token}/getWebhookInfo"
+                    async with session.get(get_url) as resp:
+                        webhook_info = await resp.json()
+                        if webhook_info.get("ok") and webhook_info.get("result", {}).get("url") == webhook_path:
+                            logger.info(f"✅ Webhook для {bot_name} подтверждён: {webhook_path}")
+                        else:
+                            actual_url = webhook_info.get("result", {}).get("url", "не установлен")
+                            logger.warning(f"⚠️ Webhook для {bot_name} не совпадает: ожидалось {webhook_path}, получено {actual_url}")
+                    
             except Exception as e:
                 logger.error(f"❌ Ошибка при установке webhook для {bot_name}: {e}")
+                logger.error(f"Тип ошибки: {type(e).__name__}")
                 logger.error(f"Трассировка: {traceback.format_exc()}")
     
     async def process_webhook(self, token: str, update_data: dict) -> web.Response:
