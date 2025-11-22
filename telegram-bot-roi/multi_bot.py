@@ -76,6 +76,8 @@ def get_postgresql_url():
         pg_password = os.getenv("PGPASSWORD", os.getenv("POSTGRES_PASSWORD", ""))
         pg_database = os.getenv("PGDATABASE", os.getenv("POSTGRES_DB", "railway"))
         
+        logger.info(f"🔍 Проверка переменных PostgreSQL: PGUSER={pg_user[:10] if pg_user else 'НЕТ'}, PGPASSWORD={'ЕСТЬ' if pg_password else 'НЕТ'}, PGDATABASE={pg_database}")
+        
         # Если есть пароль, собираем URL
         if pg_password:
             host, port = database_url.split(":", 1)
@@ -84,6 +86,7 @@ def get_postgresql_url():
             return full_url
         else:
             logger.warning("⚠️ Не найден пароль PostgreSQL в переменных окружения")
+            logger.warning(f"⚠️ Доступные переменные: PGPASSWORD={os.getenv('PGPASSWORD', 'НЕТ')}, POSTGRES_PASSWORD={os.getenv('POSTGRES_PASSWORD', 'НЕТ')}")
             return None
     
     # Проверяем отдельные переменные PostgreSQL
