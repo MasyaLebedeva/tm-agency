@@ -1,0 +1,926 @@
+<!DOCTYPE html>
+<html lang="ru">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Sawasdee Home - Дизайн интерьеров под ключ на Пхукете</title>
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        :root {
+            --primary: #8b6f47;
+            --secondary: #6b5b3d;
+            --accent: #c9a961;
+            --gold: #d4af37;
+            --light: #faf8f3;
+            --dark: #3d2817;
+            --text: #4a3c2a;
+            --text-light: #8b7355;
+            --beige: #f5f1e8;
+            --cream: #fffef7;
+            --brown: #a0826d;
+        }
+
+        body {
+            font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', 'Roboto', 'Oxygen', 'Ubuntu', 'Cantarell', sans-serif;
+            line-height: 1.6;
+            color: var(--text);
+            overflow-x: hidden;
+        }
+
+        /* Smooth scroll */
+        html {
+            scroll-behavior: smooth;
+        }
+
+        /* Header */
+        header {
+            background: linear-gradient(135deg, var(--primary) 0%, var(--secondary) 100%);
+            color: white;
+            padding: 1.5rem 0;
+            position: sticky;
+            top: 0;
+            z-index: 1000;
+            box-shadow: 0 4px 20px rgba(139, 111, 71, 0.2);
+        }
+
+        .header-container {
+            max-width: 1200px;
+            margin: 0 auto;
+            padding: 0 2rem;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            flex-wrap: wrap;
+        }
+
+        .logo {
+            font-size: 1.8rem;
+            font-weight: 700;
+            letter-spacing: 2px;
+            background: linear-gradient(135deg, var(--gold), #f4d03f);
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+            background-clip: text;
+        }
+
+        .header-cta {
+            display: flex;
+            gap: 1rem;
+            flex-wrap: wrap;
+        }
+
+        .btn {
+            padding: 0.75rem 1.5rem;
+            border-radius: 50px;
+            text-decoration: none;
+            font-weight: 600;
+            transition: all 0.3s ease;
+            display: inline-flex;
+            align-items: center;
+            gap: 0.5rem;
+            border: 2px solid transparent;
+        }
+
+        .btn-primary {
+            background: linear-gradient(135deg, var(--accent), var(--gold));
+            color: white;
+            box-shadow: 0 4px 15px rgba(201, 169, 97, 0.4);
+        }
+
+        .btn-primary:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 6px 20px rgba(201, 169, 97, 0.5);
+            background: linear-gradient(135deg, var(--gold), #f4d03f);
+        }
+
+        .btn-outline {
+            border: 2px solid white;
+            color: white;
+            background: transparent;
+        }
+
+        .btn-outline:hover {
+            background: white;
+            color: var(--primary);
+        }
+
+        /* Hero Section */
+        .hero {
+            background: linear-gradient(135deg, #d4c5b0 0%, #c9a961 50%, #b8956a 100%);
+            color: var(--dark);
+            padding: 6rem 2rem;
+            text-align: center;
+            position: relative;
+            overflow: hidden;
+        }
+
+        .hero::before {
+            content: '';
+            position: absolute;
+            top: 0;
+            left: 0;
+            right: 0;
+            bottom: 0;
+            background: url('data:image/svg+xml,<svg width="100" height="100" xmlns="http://www.w3.org/2000/svg"><defs><pattern id="grid" width="100" height="100" patternUnits="userSpaceOnUse"><path d="M 100 0 L 0 0 0 100" fill="none" stroke="rgba(255,255,255,0.1)" stroke-width="1"/></pattern></defs><rect width="100%" height="100%" fill="url(%23grid)"/></svg>');
+            opacity: 0.3;
+        }
+
+        .hero-content {
+            max-width: 900px;
+            margin: 0 auto;
+            position: relative;
+            z-index: 1;
+        }
+
+        .hero h1 {
+            font-size: clamp(2.5rem, 5vw, 4rem);
+            font-weight: 800;
+            margin-bottom: 1.5rem;
+            line-height: 1.2;
+            text-shadow: 1px 1px 3px rgba(255,255,255,0.5);
+            color: var(--dark);
+        }
+
+        .hero p {
+            font-size: 1.3rem;
+            margin-bottom: 2rem;
+            color: var(--dark);
+            font-weight: 500;
+        }
+
+        .hero-badges {
+            display: flex;
+            justify-content: center;
+            gap: 1rem;
+            flex-wrap: wrap;
+            margin-top: 2rem;
+        }
+
+        .badge {
+            background: rgba(255,255,255,0.4);
+            backdrop-filter: blur(10px);
+            padding: 0.5rem 1.5rem;
+            border-radius: 50px;
+            font-size: 0.9rem;
+            border: 1px solid rgba(61, 40, 23, 0.2);
+            color: var(--dark);
+            font-weight: 600;
+        }
+
+        /* Sections */
+        .section {
+            padding: 5rem 2rem;
+        }
+
+        .container {
+            max-width: 1200px;
+            margin: 0 auto;
+        }
+
+        .section-title {
+            font-size: clamp(2rem, 4vw, 3rem);
+            font-weight: 700;
+            text-align: center;
+            margin-bottom: 1rem;
+            color: var(--primary);
+        }
+
+        .section-subtitle {
+            text-align: center;
+            font-size: 1.2rem;
+            color: var(--text-light);
+            margin-bottom: 3rem;
+        }
+
+        /* Features Grid */
+        .features-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(300px, 1fr));
+            gap: 2rem;
+            margin-top: 3rem;
+        }
+
+        .feature-card {
+            background: var(--cream);
+            padding: 2rem;
+            border-radius: 20px;
+            box-shadow: 0 10px 30px rgba(139, 111, 71, 0.15);
+            transition: all 0.3s ease;
+            border: 1px solid rgba(201, 169, 97, 0.2);
+        }
+
+        .feature-card:hover {
+            transform: translateY(-10px);
+            box-shadow: 0 20px 40px rgba(0,0,0,0.15);
+        }
+
+        .feature-icon {
+            font-size: 3rem;
+            margin-bottom: 1rem;
+        }
+
+        .feature-card h3 {
+            font-size: 1.5rem;
+            margin-bottom: 1rem;
+            color: var(--primary);
+        }
+
+        .feature-card p {
+            color: var(--text-light);
+            line-height: 1.8;
+        }
+
+        /* Pricing Cards */
+        .pricing-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(320px, 1fr));
+            gap: 2rem;
+            margin-top: 3rem;
+        }
+
+        .pricing-card {
+            background: var(--cream);
+            border-radius: 25px;
+            padding: 2.5rem;
+            box-shadow: 0 15px 35px rgba(139, 111, 71, 0.15);
+            transition: all 0.3s ease;
+            border: 2px solid rgba(201, 169, 97, 0.3);
+            position: relative;
+            overflow: hidden;
+        }
+
+        .pricing-card::before {
+            content: '';
+            position: absolute;
+            top: 0;
+            left: 0;
+            right: 0;
+            height: 5px;
+            background: linear-gradient(90deg, var(--accent), var(--gold));
+        }
+
+        .pricing-card:hover {
+            transform: translateY(-10px);
+            border-color: var(--accent);
+            box-shadow: 0 25px 50px rgba(0,0,0,0.15);
+        }
+
+        .pricing-card.featured {
+            border: 3px solid var(--gold);
+            transform: scale(1.05);
+            background: linear-gradient(135deg, var(--cream) 0%, #fff9f0 100%);
+        }
+
+        .pricing-card.featured::before {
+            height: 8px;
+        }
+
+        .pricing-name {
+            font-size: 1.8rem;
+            font-weight: 700;
+            margin-bottom: 1rem;
+            color: var(--primary);
+        }
+
+        .pricing-price {
+            font-size: 2.5rem;
+            font-weight: 800;
+            color: var(--primary);
+            margin: 1.5rem 0;
+        }
+
+        .pricing-features {
+            list-style: none;
+            margin: 2rem 0;
+        }
+
+        .pricing-features li {
+            padding: 0.75rem 0;
+            border-bottom: 1px solid rgba(0,0,0,0.05);
+            display: flex;
+            align-items: center;
+            gap: 0.5rem;
+        }
+
+        .pricing-features li::before {
+            content: '✓';
+            color: var(--gold);
+            font-weight: bold;
+            font-size: 1.2rem;
+        }
+
+        /* Team Section */
+        .team-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(280px, 1fr));
+            gap: 2rem;
+            margin-top: 3rem;
+        }
+
+        .team-card {
+            background: var(--cream);
+            border-radius: 20px;
+            padding: 2rem;
+            text-align: center;
+            box-shadow: 0 10px 30px rgba(139, 111, 71, 0.15);
+            transition: all 0.3s ease;
+            border: 1px solid rgba(201, 169, 97, 0.2);
+        }
+
+        .team-card:hover {
+            transform: translateY(-5px);
+            box-shadow: 0 15px 40px rgba(0,0,0,0.15);
+        }
+
+        .team-avatar {
+            width: 150px;
+            height: 150px;
+            border-radius: 50%;
+            background: linear-gradient(135deg, var(--primary), var(--brown));
+            margin: 0 auto 1.5rem;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 3rem;
+            color: white;
+            font-weight: bold;
+            box-shadow: 0 8px 20px rgba(139, 111, 71, 0.3);
+        }
+
+        .team-name {
+            font-size: 1.5rem;
+            font-weight: 700;
+            margin-bottom: 0.5rem;
+            color: var(--primary);
+        }
+
+        .team-role {
+            color: var(--text-light);
+            margin-bottom: 1rem;
+        }
+
+        /* FAQ */
+        .faq-container {
+            max-width: 800px;
+            margin: 0 auto;
+        }
+
+        .faq-item {
+            background: var(--cream);
+            border-radius: 15px;
+            margin-bottom: 1rem;
+            padding: 1.5rem;
+            box-shadow: 0 5px 15px rgba(139, 111, 71, 0.1);
+            transition: all 0.3s ease;
+            border: 1px solid rgba(201, 169, 97, 0.2);
+        }
+
+        .faq-item:hover {
+            box-shadow: 0 8px 25px rgba(0,0,0,0.12);
+        }
+
+        .faq-question {
+            font-weight: 600;
+            font-size: 1.1rem;
+            margin-bottom: 0.5rem;
+            color: var(--primary);
+        }
+
+        .faq-answer {
+            color: var(--text-light);
+            line-height: 1.8;
+        }
+
+        /* CTA Section */
+        .cta-section {
+            background: linear-gradient(135deg, var(--primary) 0%, var(--secondary) 100%);
+            color: white;
+            padding: 5rem 2rem;
+            text-align: center;
+            border-radius: 30px;
+            margin: 3rem 2rem;
+            box-shadow: 0 15px 40px rgba(139, 111, 71, 0.3);
+        }
+
+        .cta-section h2 {
+            font-size: clamp(2rem, 4vw, 3rem);
+            margin-bottom: 1.5rem;
+        }
+
+        .cta-section p {
+            font-size: 1.2rem;
+            margin-bottom: 2rem;
+            opacity: 0.9;
+        }
+
+        /* Footer */
+        footer {
+            background: var(--dark);
+            color: white;
+            padding: 3rem 2rem 1.5rem;
+            text-align: center;
+        }
+
+        .footer-content {
+            max-width: 1200px;
+            margin: 0 auto;
+        }
+
+        .footer-links {
+            display: flex;
+            justify-content: center;
+            gap: 2rem;
+            flex-wrap: wrap;
+            margin: 2rem 0;
+        }
+
+        .footer-links a {
+            color: rgba(255,255,255,0.7);
+            text-decoration: none;
+            transition: color 0.3s ease;
+        }
+
+        .footer-links a:hover {
+            color: var(--accent);
+        }
+
+        .footer-bottom {
+            margin-top: 2rem;
+            padding-top: 2rem;
+            border-top: 1px solid rgba(255,255,255,0.1);
+            color: rgba(255,255,255,0.5);
+            font-size: 0.9rem;
+        }
+
+        /* Process Steps */
+        .process-steps {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(150px, 1fr));
+            gap: 2rem;
+            margin-top: 3rem;
+            position: relative;
+        }
+
+        .process-step {
+            text-align: center;
+            position: relative;
+        }
+
+        .step-number {
+            width: 60px;
+            height: 60px;
+            border-radius: 50%;
+            background: linear-gradient(135deg, var(--primary), var(--brown));
+            color: white;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 1.5rem;
+            font-weight: bold;
+            margin: 0 auto 1rem;
+            box-shadow: 0 5px 15px rgba(139, 111, 71, 0.3);
+        }
+
+        .step-text {
+            font-weight: 600;
+            color: var(--primary);
+        }
+
+        /* Locations */
+        .locations {
+            display: flex;
+            justify-content: center;
+            gap: 1rem;
+            flex-wrap: wrap;
+            margin: 2rem 0;
+        }
+
+        .location-tag {
+            background: rgba(201, 169, 97, 0.15);
+            color: var(--primary);
+            padding: 0.5rem 1.5rem;
+            border-radius: 50px;
+            font-weight: 600;
+            border: 2px solid var(--accent);
+        }
+
+        /* Responsive */
+        @media (max-width: 768px) {
+            .header-container {
+                flex-direction: column;
+                gap: 1rem;
+            }
+
+            .hero {
+                padding: 4rem 1rem;
+            }
+
+            .section {
+                padding: 3rem 1rem;
+            }
+
+            .pricing-card.featured {
+                transform: scale(1);
+            }
+        }
+
+        /* Animations */
+        @keyframes fadeInUp {
+            from {
+                opacity: 0;
+                transform: translateY(30px);
+            }
+            to {
+                opacity: 1;
+                transform: translateY(0);
+            }
+        }
+
+        .fade-in {
+            animation: fadeInUp 0.6s ease-out;
+        }
+
+        /* Instagram Link */
+        .instagram-link {
+            display: inline-flex;
+            align-items: center;
+            gap: 0.5rem;
+            background: linear-gradient(45deg, #f09433 0%, #e6683c 25%, #dc2743 50%, #cc2366 75%, #bc1888 100%);
+            color: white;
+            padding: 1rem 2rem;
+            border-radius: 50px;
+            text-decoration: none;
+            font-weight: 600;
+            margin-top: 1rem;
+            transition: all 0.3s ease;
+            box-shadow: 0 4px 15px rgba(188, 24, 136, 0.3);
+        }
+
+        .instagram-link:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 6px 20px rgba(188, 24, 136, 0.4);
+        }
+    </style>
+</head>
+<body>
+    <!-- Header -->
+    <header>
+        <div class="header-container">
+            <div class="logo">SAWASDEE HOME</div>
+            <div class="header-cta">
+                <a href="https://wa.me/yournumber" class="btn btn-primary">WhatsApp</a>
+                <a href="https://t.me/yourusername" class="btn btn-outline">Telegram</a>
+            </div>
+        </div>
+    </header>
+
+    <!-- Hero Section -->
+    <section class="hero">
+        <div class="hero-content">
+            <h1>Интерьеры, которые вдохновляют и повышают ценность вашей недвижимости</h1>
+            <p>У нас всё от архитектурных чертежей до реализации под ключ</p>
+            <div class="hero-badges">
+                <div class="badge">🏗️ Строительные материалы</div>
+                <div class="badge">❄️ Кондиционеры</div>
+                <div class="badge">🪑 Мебель</div>
+                <div class="badge">📱 Техника</div>
+                <div class="badge">🎨 Декор</div>
+            </div>
+            <div style="margin-top: 2rem;">
+                <a href="#contact" class="btn btn-primary" style="font-size: 1.1rem; padding: 1rem 2.5rem;">Начать проект</a>
+            </div>
+        </div>
+    </section>
+
+    <!-- Why Choose Us -->
+    <section class="section" style="background: var(--light);">
+        <div class="container">
+            <h2 class="section-title">Почему выбирают Sawasdee Home</h2>
+            <p class="section-subtitle">У нас цены ниже рынка на 10-30% за счет:</p>
+            
+            <div class="features-grid">
+                <div class="feature-card fade-in">
+                    <div class="feature-icon">📦</div>
+                    <h3>Оптовые закупки</h3>
+                    <p>Работаем напрямую с фабриками и заводами без посредников</p>
+                </div>
+                <div class="feature-card fade-in">
+                    <div class="feature-icon">🚚</div>
+                    <h3>Своя логистика</h3>
+                    <p>Собственная логистическая компания и цены за доставку без лишних накруток</p>
+                </div>
+                <div class="feature-card fade-in">
+                    <div class="feature-icon">🔧</div>
+                    <h3>Реализуем сами</h3>
+                    <p>Реализуем Ваш проект сами, а не передаем Ваш заказ другим исполнителям за процент</p>
+                </div>
+            </div>
+
+            <div class="features-grid" style="margin-top: 2rem;">
+                <div class="feature-card fade-in">
+                    <div class="feature-icon">📈</div>
+                    <h3>Повышаем стоимость</h3>
+                    <p>Повышаем стоимость объекта до +20% после комплектации</p>
+                </div>
+                <div class="feature-card fade-in">
+                    <div class="feature-icon">🎯</div>
+                    <h3>Полный цикл</h3>
+                    <p>От дизайн-проекта до установки мебели</p>
+                </div>
+                <div class="feature-card fade-in">
+                    <div class="feature-icon">✨</div>
+                    <h3>Премиум-мебель</h3>
+                    <p>Производство премиум-мебели по индивидуальным размерам</p>
+                </div>
+                <div class="feature-card fade-in">
+                    <div class="feature-icon">👁️</div>
+                    <h3>Авторский надзор</h3>
+                    <p>Авторский надзор и сопровождение реализации</p>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <!-- CTA Section -->
+    <section class="cta-section">
+        <div class="container">
+            <h2>Работаем с любым бюджетом</h2>
+            <p>Напишите, посчитаем проект под Ваши задачи</p>
+            <div class="locations">
+                <span class="location-tag">Пхукет</span>
+                <span class="location-tag">Самуи</span>
+                <span class="location-tag">Панган</span>
+            </div>
+            <div style="margin-top: 2rem;">
+                <a href="https://wa.me/yournumber" class="btn btn-primary" style="background: white; color: var(--primary); margin-right: 1rem;">WhatsApp</a>
+                <a href="https://t.me/yourusername" class="btn btn-outline">Telegram</a>
+            </div>
+        </div>
+    </section>
+
+    <!-- Instagram Section -->
+    <section class="section">
+        <div class="container" style="text-align: center;">
+            <h2 class="section-title">Наблюдай за ремонтом проектов в реальном времени</h2>
+            <p class="section-subtitle">В нашем Instagram вы можете смотреть за ремонтами на виллах в реальном времени</p>
+            <a href="https://instagram.com/yourusername" class="instagram-link" target="_blank">
+                📷 Смотреть в Instagram
+            </a>
+        </div>
+    </section>
+
+    <!-- Pricing -->
+    <section class="section" style="background: var(--light);" id="pricing">
+        <div class="container">
+            <h2 class="section-title">Пакеты услуг</h2>
+            <p class="section-subtitle">Выберите подходящий вариант для вашего проекта</p>
+            
+            <div class="pricing-grid">
+                <!-- Стандартный -->
+                <div class="pricing-card">
+                    <div class="pricing-name">Стандартный</div>
+                    <div class="pricing-price">от 500 000 ₿</div>
+                    <p style="color: var(--text-light); margin-bottom: 1.5rem;">Идеальное решение для быстрой подготовки объекта к продаже или аренде</p>
+                    <ul class="pricing-features">
+                        <li>Разработка базовой концепции дизайна</li>
+                        <li>Комплект основной мебели</li>
+                        <li>Быстрая реализация</li>
+                    </ul>
+                    <p style="margin-top: 1.5rem; font-weight: 600; color: var(--primary);">Целевая аудитория:</p>
+                    <p style="color: var(--text-light);">Инвесторы, ориентированные на быструю окупаемость; проекты эконом- и комфорт-класса</p>
+                    <div style="margin-top: 2rem;">
+                        <a href="https://wa.me/yournumber" class="btn btn-primary" style="width: 100%; justify-content: center;">WhatsApp</a>
+                        <a href="https://t.me/yourusername" class="btn btn-outline" style="width: 100%; justify-content: center; margin-top: 0.5rem; color: var(--primary); border-color: var(--primary);">Telegram</a>
+                    </div>
+                </div>
+
+                <!-- Под ключ -->
+                <div class="pricing-card featured">
+                    <div class="pricing-name">Под ключ</div>
+                    <div class="pricing-price">от 1 000 000 ₿</div>
+                    <p style="color: var(--text-light); margin-bottom: 1.5rem;">Полностью готовый к жизни интерьер, который впечатлит ваших клиентов</p>
+                    <ul class="pricing-features">
+                        <li>Индивидуальный дизайн-проект с 3D-визуализацией</li>
+                        <li>Полный комплект всех технических чертежей</li>
+                        <li>Полный комплект мебели премиум-класса</li>
+                        <li>Декор, текстиль, освещение и аксессуары</li>
+                        <li>Доставка, сборка и установка "под ключ"</li>
+                    </ul>
+                    <p style="margin-top: 1.5rem; font-weight: 600; color: var(--primary);">Целевая аудитория:</p>
+                    <p style="color: var(--text-light);">Проекты бизнес-класса; застройщики, желающие предложить покупателям полностью меблированные лоты</p>
+                    <div style="margin-top: 2rem;">
+                        <a href="https://wa.me/yournumber" class="btn btn-primary" style="width: 100%; justify-content: center;">WhatsApp</a>
+                        <a href="https://t.me/yourusername" class="btn btn-outline" style="width: 100%; justify-content: center; margin-top: 0.5rem; color: var(--primary); border-color: var(--primary);">Telegram</a>
+                    </div>
+                </div>
+
+                <!-- Премиум -->
+                <div class="pricing-card">
+                    <div class="pricing-name">Премиум</div>
+                    <div class="pricing-price">от 2 000 000 ₿</div>
+                    <p style="color: var(--text-light); margin-bottom: 1.5rem;">Эксклюзивное решение для самых требовательных клиентов</p>
+                    <ul class="pricing-features">
+                        <li>Авторский и технический надзор за строительством</li>
+                        <li>Индивидуальный дизайн-проект с 3D-визуализацией</li>
+                        <li>Полный комплект всех технических чертежей</li>
+                        <li>Полный комплект мебели премиум-класса</li>
+                        <li>Декор, текстиль, освещение и аксессуары</li>
+                        <li>Доставка, сборка и установка "под ключ"</li>
+                        <li>Готов к заселению в день получения ключей</li>
+                    </ul>
+                    <p style="margin-top: 1.5rem; font-weight: 600; color: var(--primary);">Целевая аудитория:</p>
+                    <p style="color: var(--text-light);">Проекты премиум- и элит-класса; виллы и пентхаусы</p>
+                    <div style="margin-top: 2rem;">
+                        <a href="https://wa.me/yournumber" class="btn btn-primary" style="width: 100%; justify-content: center;">WhatsApp</a>
+                        <a href="https://t.me/yourusername" class="btn btn-outline" style="width: 100%; justify-content: center; margin-top: 0.5rem; color: var(--primary); border-color: var(--primary);">Telegram</a>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <!-- Team -->
+    <section class="section">
+        <div class="container">
+            <h2 class="section-title">Семейный бизнес на Пхукете</h2>
+            <p class="section-subtitle">Основатели компании</p>
+            
+            <div class="team-grid">
+                <div class="team-card">
+                    <div class="team-avatar">АН</div>
+                    <div class="team-name">Алексей Николаев</div>
+                    <div class="team-role">Основатель компании</div>
+                    <p style="color: var(--text-light); line-height: 1.8;">Я, основатель Sawasdee Home, опираюсь на более чем двадцатилетний опыт в индустрии, чтобы соединять дизайн вне времени с современными технологиями производства.</p>
+                    <div style="margin-top: 1.5rem;">
+                        <a href="https://t.me/yourusername" class="btn btn-primary" style="font-size: 0.9rem; padding: 0.5rem 1rem;">Написать в Telegram</a>
+                    </div>
+                </div>
+                
+                <div class="team-card">
+                    <div class="team-avatar">ИТ</div>
+                    <div class="team-name">Ирина Трункова</div>
+                    <div class="team-role">Директор дизайна и архитектуры</div>
+                    <p style="color: var(--text-light); line-height: 1.8;">Обладая более чем 15-летним опытом. Я вижу в каждом проекте шанс создать для наших клиентов целостный, гармоничный мир.</p>
+                    <div style="margin-top: 1.5rem;">
+                        <a href="https://t.me/yourusername" class="btn btn-primary" style="font-size: 0.9rem; padding: 0.5rem 1rem;">Написать в Telegram</a>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <!-- Process -->
+    <section class="section" style="background: var(--light);">
+        <div class="container">
+            <h2 class="section-title">Как работаем</h2>
+            <div class="process-steps">
+                <div class="process-step">
+                    <div class="step-number">1</div>
+                    <div class="step-text">Заявка или звонок</div>
+                </div>
+                <div class="process-step">
+                    <div class="step-number">2</div>
+                    <div class="step-text">Встреча / онлайн-консультация</div>
+                </div>
+                <div class="process-step">
+                    <div class="step-number">3</div>
+                    <div class="step-text">Разработка дизайн-проекта</div>
+                </div>
+                <div class="process-step">
+                    <div class="step-number">4</div>
+                    <div class="step-text">Подписание договора</div>
+                </div>
+                <div class="process-step">
+                    <div class="step-number">5</div>
+                    <div class="step-text">Производство и комплектация</div>
+                </div>
+                <div class="process-step">
+                    <div class="step-number">6</div>
+                    <div class="step-text">Доставка, установка, сдача объекта</div>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <!-- FAQ -->
+    <section class="section" id="faq">
+        <div class="container">
+            <h2 class="section-title">Частые вопросы</h2>
+            <p class="section-subtitle">Если остались вопросы - напишите, обсудим</p>
+            
+            <div class="faq-container">
+                <div class="faq-item">
+                    <div class="faq-question">Как работаем?</div>
+                    <div class="faq-answer">
+                        1️⃣ Заявка или звонок<br>
+                        2️⃣ Встреча / онлайн-консультация<br>
+                        3️⃣ Разработка дизайн-проекта<br>
+                        4️⃣ Подписание договора<br>
+                        5️⃣ Производство и комплектация<br>
+                        6️⃣ Доставка, установка, сдача объекта
+                    </div>
+                </div>
+                
+                <div class="faq-item">
+                    <div class="faq-question">Хотите стать партнером?</div>
+                    <div class="faq-answer">Мы ценим честное сотрудничество, в котором важны качество, ясная коммуникация и общее стремление к сильному результату. Мы открыты к партнёрству</div>
+                </div>
+                
+                <div class="faq-item">
+                    <div class="faq-question">Варианты оплаты?</div>
+                    <div class="faq-answer">Подберем удобный метод оплаты именно для Вас</div>
+                </div>
+                
+                <div class="faq-item">
+                    <div class="faq-question">Можно ли посмотреть мебель/проект живую?</div>
+                    <div class="faq-answer">Следите за нами в Instagram</div>
+                </div>
+                
+                <div class="faq-item">
+                    <div class="faq-question">Можно посмотреть образцы материалов и каталоги готовой мебели?</div>
+                    <div class="faq-answer">Приходите к нам в офис и мы с радостью Вам все покажем и расскажем</div>
+                </div>
+                
+                <div class="faq-item">
+                    <div class="faq-question">Какие то еще вопросы?</div>
+                    <div class="faq-answer">Пишите нам на WhatsApp или Telegram и мы ответим на все ваши вопросы</div>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <!-- Final CTA -->
+    <section class="cta-section" id="contact">
+        <div class="container">
+            <h2>Мечтаете о своем идеальном доме, не знаете, с чего начать?</h2>
+            <p>Напишите нам и мы обсудим ваш проект!</p>
+            <div style="margin-top: 2rem;">
+                <a href="https://wa.me/yournumber" class="btn btn-primary" style="background: white; color: var(--primary); margin-right: 1rem; font-size: 1.1rem; padding: 1rem 2rem;">Написать в WhatsApp</a>
+                <a href="https://t.me/yourusername" class="btn btn-outline" style="font-size: 1.1rem; padding: 1rem 2rem;">Написать в Telegram</a>
+            </div>
+        </div>
+    </section>
+
+    <!-- Footer -->
+    <footer>
+        <div class="footer-content">
+            <h3 style="margin-bottom: 1rem;">Мы на связи!</h3>
+            <p style="margin-bottom: 1rem; opacity: 0.8;">Мы ведём проекты на замечательных, очень быстро застраивающихся островах Панган, Самуи и Пхукет.</p>
+            <p style="margin-bottom: 2rem; opacity: 0.8;">Наш главный офис находится в самом престижном районе Пхукета, Банг Тао и наши двери всегда открыты для вас!</p>
+            <p style="margin-bottom: 1rem; opacity: 0.8;">Пишите нам в WhatsApp и приходите в гости в наш уютный офис с 11.00 до 19.00. Мы вас ждём.</p>
+            <p style="margin-bottom: 2rem; opacity: 0.8;"><strong>Address:</strong> 246 Bandon-Cherngtalay Rd, Phuket City, 83110</p>
+            
+            <div class="footer-links">
+                <a href="https://wa.me/yournumber">WhatsApp</a>
+                <a href="https://t.me/yourusername">Telegram</a>
+                <a href="https://instagram.com/yourusername">Instagram</a>
+            </div>
+            
+            <div class="footer-bottom">
+                <p>© 2025. Не является публичной офертой.</p>
+                <p>© Все права защищены.</p>
+            </div>
+        </div>
+    </footer>
+
+    <script>
+        // Smooth scroll for anchor links
+        document.querySelectorAll('a[href^="#"]').forEach(anchor => {
+            anchor.addEventListener('click', function (e) {
+                e.preventDefault();
+                const target = document.querySelector(this.getAttribute('href'));
+                if (target) {
+                    target.scrollIntoView({
+                        behavior: 'smooth',
+                        block: 'start'
+                    });
+                }
+            });
+        });
+
+        // Fade in animation on scroll
+        const observerOptions = {
+            threshold: 0.1,
+            rootMargin: '0px 0px -50px 0px'
+        };
+
+        const observer = new IntersectionObserver((entries) => {
+            entries.forEach(entry => {
+                if (entry.isIntersecting) {
+                    entry.target.classList.add('fade-in');
+                }
+            });
+        }, observerOptions);
+
+        document.querySelectorAll('.feature-card, .pricing-card, .team-card').forEach(el => {
+            observer.observe(el);
+        });
+    </script>
+</body>
+</html>
+
