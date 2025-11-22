@@ -1,0 +1,440 @@
+"""
+Multi-Bot Manager - Управление несколькими Telegram ботами в одном сервисе
+Объединяет ROI калькулятор бот и Gigtest бот
+"""
+import os
+import logging
+import sqlite3
+import io
+from datetime import datetime, timedelta
+from aiogram import Bot, Dispatcher
+from aiogram.types import Message, InlineKeyboardMarkup, InlineKeyboardButton, CallbackQuery, Update, BotCommand
+from aiogram.dispatcher.middlewares import BaseMiddleware
+import traceback
+import asyncio
+from aiogram.contrib.fsm_storage.memory import MemoryStorage
+from aiohttp import web
+from dotenv import load_dotenv
+from typing import Dict
+from urllib.parse import parse_qs
+
+# Загружаем переменные окружения
+load_dotenv()
+
+# Настройка логирования
+logging.basicConfig(level=logging.INFO)
+logger = logging.getLogger(__name__)
+
+BASE_DIR = os.path.dirname(os.path.abspath(__file__))
+WEBHOOK_URL = os.getenv("WEBHOOK_URL", "").strip()
+
+
+class BotConfig:
+    """Конфигурация для одного бота"""
+    def __init__(self, bot_name: str):
+        self.bot_name = bot_name
+        
+        # Безопасное получение переменных окружения
+        def safe_getenv(key: str, default: str = "") -> str:
+            """Безопасное получение переменной окружения"""
+            try:
+                value = os.getenv(key, default)
+                # Если значение похоже на путь к файлу, возвращаем пустую строку
+                if value and (value.startswith('/') or value.startswith('./') or '\\' in value):
+                    logger.warning(f"⚠️ {key} содержит путь к файлу, игнорирую: {value}")
+                    return default
+                return str(value).strip() if value else default
+            except Exception as e:
+                logger.warning(f"⚠️ Ошибка при получении {key}: {e}")
+                return default
+        
+        self.token = safe_getenv(f"{bot_name}_TOKEN", "")
+        self.channel_id = safe_getenv(f"{bot_name}_CHANNEL_ID", "")
+        self.channel_link = safe_getenv(f"{bot_name}_CHANNEL_LINK", "")
+        
+        admin_ids_str = safe_getenv(f"{bot_name}_ADMIN_IDS", "")
+        self.admin_ids = []
+        if admin_ids_str:
+            try:
+                self.admin_ids = [int(id.strip()) for id in admin_ids_str.split(",") if id.strip().isdigit()]
+            except Exception as e:
+                logger.warning(f"⚠️ Ошибка при парсинге {bot_name}_ADMIN_IDS: {e}")
+        
+        # Для ROI бота
+        self.google_sheets_link = safe_getenv(f"{bot_name}_GOOGLE_SHEETS_LINK", "")
+        self.video_link = safe_getenv(f"{bot_name}_VIDEO_LINK", "")
+        
+        # Для Gigtest бота (Google документ)
+        self.google_doc_link = safe_getenv(f"{bot_name}_GOOGLE_DOC_LINK", "")
+        
+        self.db_path = os.path.join(BASE_DIR, f'{bot_name.lower()}.db')
+        
+        if not self.token:
+            logger.warning(f"⚠️ {bot_name}_TOKEN не установлен. Бот {bot_name} не будет запущен.")
+
+
+class BotManager:
+    """Менеджер для управления несколькими ботами"""
+    
+    def __init__(self):
+        self.bots: Dict[str, Bot] = {}
+        self.dispatchers: Dict[str, Dispatcher] = {}
+        self.configs: Dict[str, BotConfig] = {}
+        self.storages: Dict[str, MemoryStorage] = {}
+        
+    def register_bot(self, bot_name: str):
+        """Регистрация бота"""
+        config = BotConfig(bot_name)
+        if not config.token:
+            logger.warning(f"Пропускаю бота {bot_name} - токен не установлен")
+            return False
+            
+        try:
+            storage = MemoryStorage()
+            bot = Bot(token=config.token)
+            dp = Dispatcher(bot)
+            dp.storage = storage
+            
+            self.bots[bot_name] = bot
+            self.dispatchers[bot_name] = dp
+            self.configs[bot_name] = config
+            self.storages[bot_name] = storage
+            
+            # Инициализация БД для бота
+            self.init_db(bot_name, config)
+            
+            # Регистрация обработчиков
+            self.register_handlers(bot_name, dp, config)
+            
+            logger.info(f"✅ Бот {bot_name} успешно зарегистрирован")
+            return True
+        except Exception as e:
+            logger.error(f"❌ Ошибка при регистрации бота {bot_name}: {e}")
+            logger.error(f"Трассировка: {traceback.format_exc()}")
+            return False
+    
+    def init_db(self, bot_name: str, config: BotConfig):
+        """Инициализация БД для бота"""
+        try:
+            conn = sqlite3.connect(config.db_path)
+            c = conn.cursor()
+            
+            c.execute('''CREATE TABLE IF NOT EXISTS users
+                         (user_id INTEGER PRIMARY KEY,
+                          username TEXT,
+                          first_name TEXT,
+                          last_name TEXT,
+                          language_code TEXT,
+                          joined_at TIMESTAMP,
+                          last_activity TIMESTAMP,
+                          is_subscribed INTEGER DEFAULT 0,
+                          source TEXT,
+                          utm_source TEXT,
+                          utm_medium TEXT,
+                          utm_campaign TEXT,
+                          referrer_id INTEGER,
+                          referrals_count INTEGER DEFAULT 0)''')
+            
+            c.execute('''CREATE TABLE IF NOT EXISTS stats
+                         (id INTEGER PRIMARY KEY AUTOINCREMENT,
+                          user_id INTEGER,
+                          action TEXT,
+                          timestamp TIMESTAMP,
+                          metadata TEXT,
+                          FOREIGN KEY(user_id) REFERENCES users(user_id))''')
+            
+            conn.commit()
+            conn.close()
+            logger.info(f"✅ БД для {bot_name} инициализирована: {config.db_path}")
+        except Exception as e:
+            logger.error(f"❌ Ошибка при инициализации БД для {bot_name}: {e}")
+    
+    def register_handlers(self, bot_name: str, dp: Dispatcher, config: BotConfig):
+        """Регистрация обработчиков для бота"""
+        bot = self.bots[bot_name]
+        
+        # Middleware для логирования
+        class LoggingMiddleware(BaseMiddleware):
+            async def on_process_message(self, message: Message, data: dict):
+                logger.info(f"[{bot_name}] Сообщение от {message.from_user.id}: {message.text}")
+                return data
+            
+            async def on_process_callback_query(self, callback: CallbackQuery, data: dict):
+                logger.info(f"[{bot_name}] Callback от {callback.from_user.id}: {callback.data}")
+                return data
+        
+        dp.middleware.setup(LoggingMiddleware())
+        
+        # Определяем тип бота по наличию ссылок
+        is_roi_bot = bool(config.google_sheets_link or config.video_link)
+        is_gigtest_bot = bool(config.google_doc_link)
+        
+        # Обработчик /start
+        @dp.message_handler(commands=["start"])
+        async def cmd_start(message: Message):
+            user_id = message.from_user.id
+            try:
+                # Добавляем пользователя в БД
+                conn = sqlite3.connect(config.db_path)
+                c = conn.cursor()
+                c.execute('''INSERT OR IGNORE INTO users 
+                            (user_id, username, first_name, last_name, language_code, joined_at, last_activity)
+                            VALUES (?, ?, ?, ?, ?, ?, ?)''',
+                         (user_id, message.from_user.username, message.from_user.first_name,
+                          message.from_user.last_name, message.from_user.language_code, datetime.now(), datetime.now()))
+                c.execute('UPDATE users SET last_activity = ? WHERE user_id = ?', (datetime.now(), user_id))
+                conn.commit()
+                conn.close()
+                
+                # Приветственное сообщение в зависимости от типа бота
+                if is_gigtest_bot:
+                    welcome_text = "👋 Привет! Чтобы получить ответы на Гигтесты, пожалуйста, подпишись на канал"
+                else:
+                    welcome_text = (
+                        "👋 Привет! Я помогу тебе рассчитать стоимость и ROI маркетинговой кампании для твоего Telegram-канала.\n\n"
+                        "📊 Получи бесплатный калькулятор ROI:\n"
+                        "• Таблица для расчета всех расходов\n"
+                        "• Автоматический расчет прибыльности\n"
+                        "• Видео-инструкция по использованию\n\n"
+                        "Чтобы получить доступ, подпишись на наш канал с полезными материалами по продвижению в Telegram!"
+                    )
+                
+                markup = InlineKeyboardMarkup(inline_keyboard=[
+                    [InlineKeyboardButton(text="📢 Подписаться на канал", url=config.channel_link)],
+                    [InlineKeyboardButton(text="✅ Проверить подписку", callback_data="check_subscription")]
+                ])
+                
+                await bot.send_message(user_id, welcome_text, reply_markup=markup)
+            except Exception as e:
+                logger.error(f"[{bot_name}] Ошибка в /start: {e}")
+                logger.error(f"Трассировка: {traceback.format_exc()}")
+        
+        # Обработчик проверки подписки
+        @dp.callback_query_handler(lambda c: c.data == "check_subscription")
+        async def process_subscription(callback: CallbackQuery):
+            user_id = callback.from_user.id
+            try:
+                await callback.answer("⏳ Проверяю подписку...")
+                
+                if not config.channel_id:
+                    await callback.answer("❌ Канал не настроен", show_alert=True)
+                    return
+                
+                # Обновляем активность
+                conn = sqlite3.connect(config.db_path)
+                c = conn.cursor()
+                c.execute('UPDATE users SET last_activity = ? WHERE user_id = ?', (datetime.now(), user_id))
+                conn.commit()
+                conn.close()
+                
+                member = await bot.get_chat_member(config.channel_id, user_id)
+                is_subscribed = member.status in ["member", "administrator", "creator"]
+                
+                # Обновляем статус подписки в БД
+                conn = sqlite3.connect(config.db_path)
+                c = conn.cursor()
+                c.execute('UPDATE users SET is_subscribed = ? WHERE user_id = ?',
+                         (1 if is_subscribed else 0, user_id))
+                conn.commit()
+                conn.close()
+                
+                if is_subscribed:
+                    await callback.answer("✅ Отлично! Отправляю материалы...")
+                    
+                    # Отправляем материалы в зависимости от типа бота
+                    if is_gigtest_bot:
+                        # Gigtest бот - отправляем Google документ
+                        materials_text = (
+                            "🎉 Спасибо за подписку. Держи файл с ответами на тесты: "
+                        )
+                        await bot.send_message(user_id, materials_text + config.google_doc_link)
+                    else:
+                        # ROI бот - отправляем таблицу и видео
+                        materials_text = (
+                            "🎉 Спасибо за подписку!\n\n"
+                            "📊 Вот твой калькулятор ROI для Telegram-канала:\n\n"
+                            "📋 <b>Google Таблица:</b>\n"
+                            "Нажми на кнопку ниже, чтобы создать свою копию таблицы.\n"
+                            "✅ Google автоматически предложит создать копию!\n"
+                            "Просто нажми \"Создать копию\" и работай со своими данными.\n"
+                            "💡 Все расчеты выполняются автоматически - просто вставляй свои цифры!\n\n"
+                        )
+                        
+                        buttons = []
+                        if config.google_sheets_link:
+                            materials_text += "🎥 <b>Видео-инструкция:</b>\nПосмотри видео, чтобы понять, как использовать калькулятор максимально эффективно!\n\n"
+                            buttons.append([InlineKeyboardButton(text="📊 Открыть Google Таблицу", url=config.google_sheets_link)])
+                        if config.video_link:
+                            buttons.append([InlineKeyboardButton(text="🎥 Видео-инструкция", url=config.video_link)])
+                        
+                        markup = InlineKeyboardMarkup(inline_keyboard=buttons) if buttons else None
+                        await bot.send_message(user_id, materials_text, reply_markup=markup, parse_mode='HTML')
+                        
+                        # Отправляем меню для ROI бота
+                        from aiogram.types import ReplyKeyboardMarkup, KeyboardButton
+                        menu = ReplyKeyboardMarkup(
+                            keyboard=[
+                                [KeyboardButton(text="🎁 Реферальная программа"), KeyboardButton(text="💬 Задать вопрос")],
+                                [KeyboardButton(text="🌐 Сайт агентства T&M")]
+                            ],
+                            resize_keyboard=True
+                        )
+                        await bot.send_message(user_id, "Выбери действие из меню:", reply_markup=menu)
+                else:
+                    await callback.answer("❌ Подписка не найдена", show_alert=True)
+                    markup = InlineKeyboardMarkup(inline_keyboard=[
+                        [InlineKeyboardButton(text="📢 Подписаться на канал", url=config.channel_link)],
+                        [InlineKeyboardButton(text="🔄 Проверить снова", callback_data="check_subscription")]
+                    ])
+                    await bot.send_message(user_id, "Подпишись на канал, чтобы получить материалы!", reply_markup=markup)
+            except Exception as e:
+                logger.error(f"[{bot_name}] Ошибка при проверке подписки: {e}")
+                logger.error(f"Трассировка: {traceback.format_exc()}")
+                await callback.answer("❌ Ошибка при проверке", show_alert=True)
+        
+        # Обработчик /admin (только для ROI бота или если есть admin_ids)
+        if config.admin_ids:
+            @dp.message_handler(commands=["admin"])
+            async def cmd_admin(message: Message):
+                if message.from_user.id not in config.admin_ids:
+                    await message.answer("⛔️ У вас нет доступа к админ-панели")
+                    return
+                
+                # Простая статистика
+                conn = sqlite3.connect(config.db_path)
+                c = conn.cursor()
+                c.execute('SELECT COUNT(*) FROM users')
+                total = c.fetchone()[0]
+                c.execute('SELECT COUNT(*) FROM users WHERE is_subscribed = 1')
+                subscribed = c.fetchone()[0]
+                c.execute("SELECT COUNT(*) FROM users WHERE last_activity > datetime('now','-1 day')")
+                active = c.fetchone()[0]
+                conn.close()
+                
+                await message.answer(
+                    f"👋 Админ-панель [{bot_name}]\n\n"
+                    f"📈 Статистика:\n"
+                    f"👥 Всего пользователей: {total}\n"
+                    f"✅ Подписано: {subscribed}\n"
+                    f"🟢 Активных за сутки: {active}"
+                )
+        
+        # Обработчик неизвестных сообщений
+        @dp.message_handler()
+        async def handle_unknown(message: Message):
+            # Игнорируем кнопки меню для ROI бота
+            if message.text in ["🎁 Реферальная программа", "💬 Задать вопрос", "🌐 Сайт агентства T&M"]:
+                return
+            await bot.send_message(message.from_user.id, "Используй /start для начала работы")
+        
+        logger.info(f"✅ Обработчики для {bot_name} зарегистрированы")
+    
+    async def set_webhooks(self):
+        """Установка webhook для всех ботов"""
+        if not WEBHOOK_URL:
+            logger.warning("WEBHOOK_URL не установлен. Используется polling режим.")
+            return
+        
+        webhook_base = WEBHOOK_URL.rstrip('/')
+        if not webhook_base.startswith('http'):
+            webhook_base = f"https://{webhook_base}"
+        
+        for bot_name, bot in self.bots.items():
+            try:
+                config = self.configs[bot_name]
+                webhook_path = f"{webhook_base}/webhook/{config.token}"
+                await bot.delete_webhook()
+                await bot.set_webhook(webhook_path, allowed_updates=["message", "callback_query"])
+                logger.info(f"✅ Webhook для {bot_name} установлен: {webhook_path}")
+            except Exception as e:
+                logger.error(f"❌ Ошибка при установке webhook для {bot_name}: {e}")
+                logger.error(f"Трассировка: {traceback.format_exc()}")
+    
+    async def process_webhook(self, token: str, update_data: dict) -> web.Response:
+        """Обработка webhook запроса"""
+        # Находим бота по токену
+        bot_name = None
+        for name, config in self.configs.items():
+            if config.token == token:
+                bot_name = name
+                break
+        
+        if not bot_name:
+            logger.warning(f"Бот с токеном {token[:10]}... не найден")
+            return web.Response(status=404, text="Bot not found")
+        
+        try:
+            dp = self.dispatchers[bot_name]
+            update = Update(**update_data)
+            await dp.process_update(update)
+            return web.Response(status=200, text="OK")
+        except Exception as e:
+            logger.error(f"[{bot_name}] Ошибка при обработке webhook: {e}")
+            logger.error(f"Трассировка: {traceback.format_exc()}")
+            return web.Response(status=500, text="Internal error")
+
+
+# Глобальный менеджер ботов
+bot_manager = BotManager()
+
+# Регистрация ботов
+# BOT1 - ROI калькулятор бот
+bot_manager.register_bot("BOT1")
+
+# BOT2 - Gigtest бот
+bot_manager.register_bot("BOT2")
+
+
+# Создание aiohttp приложения
+app = web.Application()
+
+# Health check endpoint
+async def health_check(request):
+    return web.Response(text="OK")
+
+# Webhook endpoint
+async def webhook_handler(request):
+    # Извлекаем токен из URL: /webhook/{token}
+    token = request.match_info.get('token', '')
+    
+    if not token:
+        return web.Response(status=400, text="Token required")
+    
+    try:
+        update_data = await request.json()
+        return await bot_manager.process_webhook(token, update_data)
+    except Exception as e:
+        logger.error(f"Ошибка при обработке webhook: {e}")
+        logger.error(f"Трассировка: {traceback.format_exc()}")
+        return web.Response(status=500, text="Internal error")
+
+# Регистрация роутов
+app.router.add_get('/health', health_check)
+app.router.add_get('/', health_check)
+app.router.add_post('/webhook/{token}', webhook_handler)
+
+# Startup функция
+async def on_startup(app):
+    logger.info("🚀 Запуск мульти-бота...")
+    logger.info(f"✅ Зарегистрировано ботов: {len(bot_manager.bots)}")
+    await bot_manager.set_webhooks()
+    logger.info(f"✅ Запущено ботов: {len(bot_manager.bots)}")
+
+# Shutdown функция
+async def on_shutdown(app):
+    logger.info("🛑 Остановка мульти-бота...")
+    for bot_name, bot in bot_manager.bots.items():
+        try:
+            await bot.delete_webhook()
+            await bot.session.close()
+            logger.info(f"✅ Бот {bot_name} остановлен")
+        except Exception as e:
+            logger.error(f"❌ Ошибка при остановке {bot_name}: {e}")
+
+app.on_startup.append(on_startup)
+app.on_shutdown.append(on_shutdown)
+
+if __name__ == "__main__":
+    port = int(os.getenv("PORT", 10000))
+    logger.info(f"Запуск сервера на порту {port}")
+    web.run_app(app, port=port, host='0.0.0.0')
