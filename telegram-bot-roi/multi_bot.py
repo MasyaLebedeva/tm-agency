@@ -397,6 +397,7 @@ class BotManager:
     
     async def set_webhooks(self):
         """Установка webhook для всех ботов"""
+        logger.info("🔧 Начало установки webhook для всех ботов...")
         if not WEBHOOK_URL:
             logger.warning("WEBHOOK_URL не установлен. Используется polling режим.")
             return
@@ -405,9 +406,13 @@ class BotManager:
         if not webhook_base.startswith('http'):
             webhook_base = f"https://{webhook_base}"
         
+        logger.info(f"🌐 Базовый URL webhook: {webhook_base}")
+        
         for bot_name, bot in self.bots.items():
+            logger.info(f"🔧 Обработка бота {bot_name}...")
             try:
                 config = self.configs[bot_name]
+                logger.info(f"🔧 Конфиг для {bot_name} получен, токен: {config.token[:10] if config.token else 'НЕТ'}...")
                 
                 # Проверяем, что токен установлен
                 if not config.token:
@@ -543,6 +548,7 @@ app.router.add_post('/webhook/{token}', webhook_handler)
 async def on_startup(app):
     logger.info("🚀 Запуск мульти-бота...")
     logger.info(f"✅ Зарегистрировано ботов: {len(bot_manager.bots)}")
+    logger.info("🔧 Версия кода: 2025-11-22 - Использует прямые API вызовы для webhook")
     await bot_manager.set_webhooks()
     logger.info(f"✅ Запущено ботов: {len(bot_manager.bots)}")
 
