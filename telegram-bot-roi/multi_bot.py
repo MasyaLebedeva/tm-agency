@@ -53,23 +53,32 @@ else:
         DATA_DIR = BASE_DIR
         logger.info(f"✅ Используется BASE_DIR для данных: {DATA_DIR}")
 
-# Проверяем наличие PostgreSQL
-DATABASE_URL = os.getenv("DATABASE_URL", "")
-USE_POSTGRESQL = bool(DATABASE_URL and DATABASE_URL.startswith("postgres"))
+# Функция для проверки использования PostgreSQL (вызывается во время выполнения)
+def use_postgresql():
+    """Проверяет, используется ли PostgreSQL"""
+    database_url = os.getenv("DATABASE_URL", "")
+    return bool(database_url and database_url.startswith("postgres"))
 
-if USE_POSTGRESQL:
-    logger.info("✅ Используется PostgreSQL для хранения данных")
-else:
-    logger.info("ℹ️ Используется SQLite для хранения данных")
+# Глобальная переменная для отслеживания первого подключения
+_postgresql_logged = False
 
 def get_db_connection(bot_name: str):
     """Получить подключение к базе данных (PostgreSQL или SQLite)"""
-    if USE_POSTGRESQL:
+    global _postgresql_logged
+    
+    if use_postgresql():
         # Используем PostgreSQL
-        conn = psycopg2.connect(DATABASE_URL)
+        if not _postgresql_logged:
+            logger.info("✅ Используется PostgreSQL для хранения данных")
+            _postgresql_logged = True
+        database_url = os.getenv("DATABASE_URL", "")
+        conn = psycopg2.connect(database_url)
         return conn
     else:
         # Используем SQLite
+        if not _postgresql_logged:
+            logger.info("ℹ️ Используется SQLite для хранения данных")
+            _postgresql_logged = True
         db_path = os.path.join(DATA_DIR, f'{bot_name.lower()}.db')
         conn = sqlite3.connect(db_path)
         return conn
@@ -84,7 +93,7 @@ def execute_sql(bot_name: str, query: str, params: tuple = None, fetch: bool = F
     c = conn.cursor()
     
     # Заменяем ? на %s для PostgreSQL
-    if USE_POSTGRESQL and params:
+    if use_postgresql() and params:
         query = query.replace('?', '%s')
     
     try:
@@ -202,7 +211,7 @@ class BotManager:
             users_table = f"{bot_name.lower()}_users"
             stats_table = f"{bot_name.lower()}_stats"
             
-            if USE_POSTGRESQL:
+            if use_postgresql():
                 # PostgreSQL синтаксис
                 c.execute(f'''CREATE TABLE IF NOT EXISTS {users_table}
                              (user_id BIGINT PRIMARY KEY,
@@ -263,7 +272,7 @@ class BotManager:
             logger.info(f"✅ БД для {bot_name} инициализирована")
             logger.info(f"📊 Пользователей в базе {bot_name}: {existing_users}")
             
-            if not USE_POSTGRESQL:
+            if not use_postgresql():
                 # Проверяем, существует ли файл базы данных (только для SQLite)
                 if os.path.exists(config.db_path):
                     file_size = os.path.getsize(config.db_path)
@@ -307,7 +316,7 @@ class BotManager:
                 c = conn.cursor()
                 users_table = get_table_name(bot_name, "users")
                 
-                if USE_POSTGRESQL:
+                if use_postgresql():
                     # PostgreSQL синтаксис
                     c.execute(f'''INSERT INTO {users_table} 
                                 (user_id, username, first_name, last_name, language_code, joined_at, last_activity)
@@ -385,7 +394,7 @@ class BotManager:
                 conn = get_db_connection(bot_name)
                 c = conn.cursor()
                 users_table = get_table_name(bot_name, "users")
-                if USE_POSTGRESQL:
+                if use_postgresql():
                     c.execute(f'UPDATE {users_table} SET last_activity = %s WHERE user_id = %s', (datetime.now(), user_id))
                 else:
                     c.execute(f'UPDATE {users_table} SET last_activity = ? WHERE user_id = ?', (datetime.now(), user_id))
@@ -400,7 +409,7 @@ class BotManager:
                 # Обновляем статус подписки в БД
                 conn = get_db_connection(bot_name)
                 c = conn.cursor()
-                if USE_POSTGRESQL:
+                if use_postgresql():
                     c.execute(f'UPDATE {users_table} SET is_subscribed = %s WHERE user_id = %s',
                              (1 if is_subscribed else 0, user_id))
                 else:
@@ -489,7 +498,7 @@ class BotManager:
                 total = c.fetchone()[0]
                 c.execute(f'SELECT COUNT(*) FROM {users_table} WHERE is_subscribed = 1')
                 subscribed = c.fetchone()[0]
-                if USE_POSTGRESQL:
+                if use_postgresql():
                     c.execute(f"SELECT COUNT(*) FROM {users_table} WHERE last_activity > NOW() - INTERVAL '1 day'")
                 else:
                     c.execute(f"SELECT COUNT(*) FROM {users_table} WHERE last_activity > datetime('now','-1 day')")
@@ -598,7 +607,7 @@ class BotManager:
                 total = c.fetchone()[0]
                 c.execute(f'SELECT COUNT(*) FROM {users_table} WHERE is_subscribed = 1')
                 subscribed = c.fetchone()[0]
-                if USE_POSTGRESQL:
+                if use_postgresql():
                     c.execute(f"SELECT COUNT(*) FROM {users_table} WHERE last_activity > NOW() - INTERVAL '1 day'")
                     active_24h = c.fetchone()[0]
                     c.execute(f"SELECT COUNT(*) FROM {users_table} WHERE last_activity > NOW() - INTERVAL '7 days'")
@@ -630,7 +639,7 @@ class BotManager:
                 conn = get_db_connection(bot_name)
                 c = conn.cursor()
                 users_table = get_table_name(bot_name, "users")
-                if USE_POSTGRESQL:
+                if use_postgresql():
                     c.execute(f'SELECT referrals_count FROM {users_table} WHERE user_id = %s', (user_id,))
                 else:
                     c.execute(f'SELECT referrals_count FROM {users_table} WHERE user_id = ?', (user_id,))
