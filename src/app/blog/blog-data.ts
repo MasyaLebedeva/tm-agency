@@ -10,6 +10,39 @@ function createSlug(title: string): string {
 
 export const blogPosts = [
 {
+    id: 91,
+    slug: '-91',
+    title: "Дискретные дифференциальные операторы",
+    description: "Дискретные дифференциальные операторы",
+    date: '2025-11-23',
+    readTime: '3 мин',
+    category: 'Telegram',
+    keywords: ["Telegram","TON","реклама","боты"],
+    content: ``
+  },
+{
+    id: 92,
+    slug: 'cure-beam-92',
+    title: "Cure :: Завтипы и формальная верификация для BEAM",
+    description: "Cure :: Завтипы и формальная верификация для BEAM",
+    date: '2025-11-23',
+    readTime: '3 мин',
+    category: 'Telegram',
+    keywords: ["Telegram","TON","реклама","боты"],
+    content: ``
+  },
+{
+    id: 93,
+    slug: 'pg_expecto-20-postgresql-93',
+    title: "pg_expecto + Демобаза 2.0: тестовый стенд для экспериментов с СУБД PostgreSQL",
+    description: "pg_expecto + Демобаза 2.0: тестовый стенд для экспериментов с СУБД PostgreSQL",
+    date: '2025-11-23',
+    readTime: '3 мин',
+    category: 'Telegram',
+    keywords: ["Telegram","TON","реклама","боты"],
+    content: ``
+  },
+{
     id: 88,
     slug: 'nuxt-2-nuxt-3-88',
     title: "Переезд с Nuxt 2 на Nuxt 3: почему для крупного интернет-магазина мы выбрали рерайт, а не миграцию",
