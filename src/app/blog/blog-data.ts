@@ -10,6 +10,39 @@ function createSlug(title: string): string {
 
 export const blogPosts = [
 {
+    id: 94,
+    slug: '-94',
+    title: "Куда лить бензин?",
+    description: "Куда лить бензин?",
+    date: '2025-11-24',
+    readTime: '3 мин',
+    category: 'Telegram',
+    keywords: ["Telegram","TON","реклама","боты"],
+    content: ``
+  },
+{
+    id: 95,
+    slug: 'oracle-95',
+    title: "Как Oracle стала одним из главных бенефициаров ИИ и цифровой революции",
+    description: "Как Oracle стала одним из главных бенефициаров ИИ и цифровой революции",
+    date: '2025-11-24',
+    readTime: '3 мин',
+    category: 'Telegram',
+    keywords: ["Telegram","TON","реклама","боты"],
+    content: ``
+  },
+{
+    id: 96,
+    slug: 'qa-96',
+    title: "QA в дежурствах: путь к настоящему качеству",
+    description: "QA в дежурствах: путь к настоящему качеству",
+    date: '2025-11-24',
+    readTime: '3 мин',
+    category: 'Telegram',
+    keywords: ["Telegram","TON","реклама","боты"],
+    content: ``
+  },
+{
     id: 91,
     slug: '-91',
     title: "Дискретные дифференциальные операторы",
