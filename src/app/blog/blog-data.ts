@@ -10,6 +10,39 @@ function createSlug(title: string): string {
 
 export const blogPosts = [
 {
+    id: 97,
+    slug: 'angular-nx-bpmsoft-97',
+    title: "Как собрать экосистему компонентов на Angular и Nx: наш опыт с BPMSoft",
+    description: "Как собрать экосистему компонентов на Angular и Nx: наш опыт с BPMSoft",
+    date: '2025-11-25',
+    readTime: '3 мин',
+    category: 'Telegram',
+    keywords: ["Telegram","TON","реклама","боты"],
+    content: ``
+  },
+{
+    id: 98,
+    slug: '-98',
+    title: "Отзывы и другие идеи для Хабр Карьеры",
+    description: "Отзывы и другие идеи для Хабр Карьеры",
+    date: '2025-11-25',
+    readTime: '3 мин',
+    category: 'Telegram',
+    keywords: ["Telegram","TON","реклама","боты"],
+    content: ``
+  },
+{
+    id: 99,
+    slug: 'moco-mysql-kubernetes-99',
+    title: "Обзор Moco — MySQL-оператора для Kubernetes",
+    description: "Обзор Moco — MySQL-оператора для Kubernetes",
+    date: '2025-11-25',
+    readTime: '3 мин',
+    category: 'Telegram',
+    keywords: ["Telegram","TON","реклама","боты"],
+    content: ``
+  },
+{
     id: 94,
     slug: '-94',
     title: "Куда лить бензин?",
