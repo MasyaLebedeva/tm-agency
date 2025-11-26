@@ -10,6 +10,39 @@ function createSlug(title: string): string {
 
 export const blogPosts = [
 {
+    id: 100,
+    slug: 'dsl-c-100',
+    title: "Создаём DSL на C#",
+    description: "Создаём DSL на C#",
+    date: '2025-11-26',
+    readTime: '3 мин',
+    category: 'Telegram',
+    keywords: ["Telegram","TON","реклама","боты"],
+    content: ``
+  },
+{
+    id: 101,
+    slug: 'diy-101',
+    title: "DIY мультирум: переключаем ТВ между комнатами с помощью смартфона",
+    description: "DIY мультирум: переключаем ТВ между комнатами с помощью смартфона",
+    date: '2025-11-26',
+    readTime: '3 мин',
+    category: 'Telegram',
+    keywords: ["Telegram","TON","реклама","боты"],
+    content: ``
+  },
+{
+    id: 102,
+    slug: 'exiftool-png-102',
+    title: "Скрываем данные от стандартного режима exiftool прямо в чанках PNG",
+    description: "Скрываем данные от стандартного режима exiftool прямо в чанках PNG",
+    date: '2025-11-26',
+    readTime: '3 мин',
+    category: 'Telegram',
+    keywords: ["Telegram","TON","реклама","боты"],
+    content: ``
+  },
+{
     id: 97,
     slug: 'angular-nx-bpmsoft-97',
     title: "Как собрать экосистему компонентов на Angular и Nx: наш опыт с BPMSoft",
