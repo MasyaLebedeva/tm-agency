@@ -10,6 +10,39 @@ function createSlug(title: string): string {
 
 export const blogPosts = [
 {
+    id: 103,
+    slug: 'it-103',
+    title: "IT-договор: Какие есть подводные камни как и сэкономить миллионы",
+    description: "IT-договор: Какие есть подводные камни как и сэкономить миллионы",
+    date: '2025-11-27',
+    readTime: '3 мин',
+    category: 'Telegram',
+    keywords: ["Telegram","TON","реклама","боты"],
+    content: ``
+  },
+{
+    id: 104,
+    slug: 'canon-navigator-hd-40-gui-104',
+    title: "Canon Navigator HD-40 — раритетный компьютер с факсом, сканером, принтером и необычным GUI",
+    description: "Canon Navigator HD-40 — раритетный компьютер с факсом, сканером, принтером и необычным GUI",
+    date: '2025-11-27',
+    readTime: '3 мин',
+    category: 'Telegram',
+    keywords: ["Telegram","TON","реклама","боты"],
+    content: ``
+  },
+{
+    id: 105,
+    slug: 'linux-105',
+    title: "Как поручить работу с доменом стандартным средствам Linux",
+    description: "Как поручить работу с доменом стандартным средствам Linux",
+    date: '2025-11-27',
+    readTime: '3 мин',
+    category: 'Telegram',
+    keywords: ["Telegram","TON","реклама","боты"],
+    content: ``
+  },
+{
     id: 100,
     slug: 'dsl-c-100',
     title: "Создаём DSL на C#",
