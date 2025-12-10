@@ -402,7 +402,7 @@ export async function GET(request: Request) {
   const errors: Array<{ query: string; error: string }> = []
   
   for (const query of queries) {
-    let retries = 2 // Попытки повтора
+    let retries = 1 // Уменьшил до 1 попытки повтора (всего 2 попытки) чтобы не тратить квоту
     let success = false
     
     while (retries >= 0 && !success) {
@@ -413,6 +413,16 @@ export async function GET(request: Request) {
         success = true
         console.log(`✅ Successfully generated article for "${query}"`)
       } catch (error: any) {
+        // Если ошибка связана с квотой - не повторяем
+        if (error.message?.includes('quota') || error.message?.includes('429')) {
+          console.error(`❌ Quota exceeded for query "${query}", skipping retries`)
+          errors.push({
+            query,
+            error: error.message || 'OpenAI quota exceeded'
+          })
+          break
+        }
+        
         console.error(`❌ Error generating article for query "${query}" (attempts left: ${retries}):`, error.message)
         
         if (retries === 0) {
@@ -422,8 +432,8 @@ export async function GET(request: Request) {
             error: error.message || 'Unknown error'
           })
         } else {
-          // Ждем перед повтором
-          await new Promise(resolve => setTimeout(resolve, 2000))
+          // Ждем перед повтором (увеличил до 3 секунд)
+          await new Promise(resolve => setTimeout(resolve, 3000))
         }
         retries--
       }
