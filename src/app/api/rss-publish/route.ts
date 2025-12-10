@@ -167,7 +167,8 @@ async function generateArticle(apiKey: string, query: string, useGroq: boolean =
       // Используем Groq API (бесплатно/дешево)
       apiUrl = 'https://api.groq.com/openai/v1/chat/completions'
       apiKeyToUse = groqKey
-      model = 'llama-3.3-70b-versatile' // Обновленная модель Groq (llama-3.1 была выведена из эксплуатации)
+      // Попробуем несколько моделей Groq (в порядке приоритета)
+      model = 'llama-3.3-70b-versatile' // Основная модель (если не работает, можно попробовать 'mixtral-8x7b-32768' или 'llama-3.1-8b-instant')
       console.log('✅ Using Groq API for article generation')
     } else if (openaiKey) {
       // Используем OpenAI API
