@@ -10,17 +10,6 @@ function createSlug(title: string): string {
 
 export const blogPosts = [
 {
-    id: 106,
-    slug: '2025-106',
-    title: "Монетизация телеграм канала в 2025 году",
-    description: "Монетизация телеграм канала в 2025 году",
-    date: '2025-12-10',
-    readTime: '3 мин',
-    category: 'Telegram',
-    keywords: ["Telegram","продвижение","каналы"],
-    content: ``
-  },
-{
     id: 103,
     slug: 'it-103',
     title: "IT-договор: Какие есть подводные камни как и сэкономить миллионы",
