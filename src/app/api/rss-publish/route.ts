@@ -351,7 +351,7 @@ export async function GET(request: Request) {
   // ПРИОРИТЕТ: Groq (бесплатно), если доступен
   const groqKey = process.env.GROQ_API_KEY || ''
   const openaiKey = process.env.OPENAI_API_KEY || ''
-  const useGroq = process.env.USE_GROQ === 'true' || (groqKey && groqKey.length > 0) // Приоритет Groq если есть ключ
+  const useGroq = process.env.USE_GROQ === 'true' || (groqKey && groqKey.length > 0) ? true : false // Приоритет Groq если есть ключ
   const apiKey = useGroq ? groqKey : openaiKey
   
   console.log(`🔧 API Selection: useGroq=${useGroq}, groqKey=${groqKey ? 'SET (' + groqKey.substring(0, 10) + '...)' : 'NOT SET'}, openaiKey=${openaiKey ? 'SET' : 'NOT SET'}`)
