@@ -241,24 +241,30 @@ async function generateArticle(apiKey: string, query: string, useGroq: boolean =
       }
     }
     
-    // Убираем заголовок из контента, если он там есть
-    let content = fullContent
-      .replace(/^#\s+.+$/m, '') // Убираем markdown заголовок
-      .replace(/<h1[^>]*>.*?<\/h1>/i, '') // Убираем HTML заголовок
+    // Убираем заголовок из контента перед конвертацией в HTML
+    let markdownContent = fullContent
+      .replace(/^#\s+.+$/m, '') // Убираем markdown заголовок H1
+      .replace(/<h1[^>]*>.*?<\/h1>/i, '') // Убираем HTML заголовок H1
       .trim()
     
     // Если контент пустой после удаления заголовка, используем полный контент
-    if (!content || content.length < 100) {
+    if (!markdownContent || markdownContent.length < 100) {
       console.warn('Content was empty after removing title, using full content')
-      content = fullContent
+      markdownContent = fullContent
     }
     
-    // Проверяем финальный контент - минимум 1500 символов
-    if (!content || content.length < 1500) {
-      throw new Error(`Final content is too short: ${content.length} characters (minimum required: 1500)`)
+    // Проверяем длину markdown контента перед конвертацией
+    if (!markdownContent || markdownContent.length < 1500) {
+      throw new Error(`Final content is too short: ${markdownContent.length} characters (minimum required: 1500)`)
     }
     
-    console.log(`✅ Generated article for "${query}": title="${title.substring(0, 50)}...", content length=${content.length}`)
+    // Конвертируем markdown в HTML для красивого отображения
+    let content = marked(markdownContent) as string
+    
+    // Убираем возможные дубли заголовка H1 из HTML
+    content = content.replace(/<h1[^>]*>.*?<\/h1>/gi, '').trim()
+    
+    console.log(`✅ Generated article for "${query}": title="${title.substring(0, 50)}...", content length=${content.length} chars (HTML)`)
     
     return { title, content }
   } catch (error: any) {
