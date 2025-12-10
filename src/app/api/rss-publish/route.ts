@@ -445,9 +445,15 @@ export async function GET(request: Request) {
       try {
         console.log(`Generating article for query: "${query}" (attempts left: ${retries + 1})`)
         const article = await generateArticle(apiKey, query, useGroq)
+        
+        // Дополнительная проверка перед сохранением
+        if (!article.content || article.content.trim().length < 100) {
+          throw new Error(`Article content is empty or too short: ${article.content?.length || 0} characters`)
+        }
+        
         articles.push({ ...article, query }) // Сохраняем query вместе с article
         success = true
-        console.log(`✅ Successfully generated article for "${query}"`)
+        console.log(`✅ Successfully generated article for "${query}": ${article.content.length} chars`)
       } catch (error: any) {
         // Если ошибка связана с квотой - не повторяем
         if (error.message?.includes('quota') || error.message?.includes('429')) {
