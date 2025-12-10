@@ -1,7 +1,14 @@
 import { NextResponse } from 'next/server'
 import { getQueriesByIndex } from '../seo-queries'
+import { marked } from 'marked'
 export const runtime = 'nodejs'
 export const dynamic = 'force-dynamic'
+
+// Настройка marked для правильного форматирования
+marked.setOptions({
+  breaks: true, // Преобразует переносы строк в <br>
+  gfm: true, // GitHub Flavored Markdown
+})
 
 // Функция для генерации байтового SEO-заголовка (50-60 символов оптимально)
 function generateByteOptimizedTitle(query: string): string {
