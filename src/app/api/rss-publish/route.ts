@@ -354,6 +354,8 @@ export async function GET(request: Request) {
   const useGroq = process.env.USE_GROQ === 'true' || (groqKey && groqKey.length > 0) // Приоритет Groq если есть ключ
   const apiKey = useGroq ? groqKey : openaiKey
   
+  console.log(`🔧 API Selection: useGroq=${useGroq}, groqKey=${groqKey ? 'SET (' + groqKey.substring(0, 10) + '...)' : 'NOT SET'}, openaiKey=${openaiKey ? 'SET' : 'NOT SET'}`)
+  
   console.log(`API Selection: useGroq=${useGroq}, groqKey=${groqKey ? 'SET' : 'NOT SET'}, openaiKey=${openaiKey ? 'SET' : 'NOT SET'}`)
   
   const ghToken = process.env.GITHUB_TOKEN || ''
