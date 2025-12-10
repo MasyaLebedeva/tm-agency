@@ -153,24 +153,24 @@ async function generateArticle(openaiKey: string, query: string): Promise<{ titl
   const prompt = buildPrompt(query)
   
   try {
-    const resp = await fetch('https://api.openai.com/v1/chat/completions', {
-      method: 'POST',
-      headers: {
-        'Content-Type': 'application/json',
-        Authorization: `Bearer ${openaiKey}`,
-      },
-      body: JSON.stringify({
+  const resp = await fetch('https://api.openai.com/v1/chat/completions', {
+    method: 'POST',
+    headers: {
+      'Content-Type': 'application/json',
+      Authorization: `Bearer ${openaiKey}`,
+    },
+    body: JSON.stringify({
         model: 'gpt-4o',
-        messages: [
+      messages: [
           { 
             role: 'system', 
             content: 'Ты опытный копирайтер и SEO-специалист, который пишет полезные, продающие статьи для маркетингового блога T&M Agency - первого рекламного агентства, специализирующегося на продвижении в Telegram. Ты пишешь максимально человекоподобно, даешь реальную ценность читателям и естественно интегрируешь информацию об агентстве.' 
           },
-          { role: 'user', content: prompt },
-        ],
+        { role: 'user', content: prompt },
+      ],
         temperature: 0.8,
-      }),
-    })
+    }),
+  })
     
     if (!resp.ok) {
       const errorText = await resp.text()
@@ -179,7 +179,7 @@ async function generateArticle(openaiKey: string, query: string): Promise<{ titl
       throw new Error(`OpenAI API failed: ${resp.status} ${resp.statusText} - ${errorText}`)
     }
     
-    const data = await resp.json()
+  const data = await resp.json()
     
     if (!data?.choices?.[0]?.message?.content) {
       console.error('OpenAI response structure:', JSON.stringify(data, null, 2))
@@ -188,11 +188,11 @@ async function generateArticle(openaiKey: string, query: string): Promise<{ titl
     
     const fullContent = data.choices[0].message.content.trim()
     
-    // Минимальная длина контента - 2000 символов (примерно 1500-2000 слов)
-    if (!fullContent || fullContent.length < 2000) {
+    // Минимальная длина контента - 1500 символов (более гибкое требование)
+    if (!fullContent || fullContent.length < 1500) {
       console.error(`Generated content too short: ${fullContent.length} chars`)
       console.error(`Content preview: ${fullContent.substring(0, 500)}`)
-      throw new Error(`Generated content is too short: ${fullContent.length} characters (minimum required: 2000)`)
+      throw new Error(`Generated content is too short: ${fullContent.length} characters (minimum required: 1500)`)
     }
     
     // Извлекаем заголовок из контента (первая строка с # или первый H1)
@@ -219,9 +219,9 @@ async function generateArticle(openaiKey: string, query: string): Promise<{ titl
       content = fullContent
     }
     
-    // Проверяем финальный контент - минимум 2000 символов
-    if (!content || content.length < 2000) {
-      throw new Error(`Final content is too short: ${content.length} characters (minimum required: 2000)`)
+    // Проверяем финальный контент - минимум 1500 символов
+    if (!content || content.length < 1500) {
+      throw new Error(`Final content is too short: ${content.length} characters (minimum required: 1500)`)
     }
     
     console.log(`✅ Generated article for "${query}": title="${title.substring(0, 50)}...", content length=${content.length}`)
@@ -398,19 +398,50 @@ export async function GET(request: Request) {
   const queries = getQueriesByIndex(startIndex, articleCount)
 
   // Генерация статей на основе SEO-запросов
-  const articles: Array<{ title: string; content: string }> = []
+  const articles: Array<{ title: string; content: string; query: string }> = []
+  const errors: Array<{ query: string; error: string }> = []
+  
   for (const query of queries) {
-    try {
-      const article = await generateArticle(openaiKey, query)
-      articles.push(article)
-    } catch (error) {
-      console.error(`Error generating article for query "${query}":`, error)
-      // В случае ошибки создаем базовую статью
-      articles.push({
-        title: generateByteOptimizedTitle(query),
-        content: `<p>Статья по запросу: ${query}</p><p>Ошибка генерации контента. Пожалуйста, попробуйте позже.</p>`
-      })
+    let retries = 2 // Попытки повтора
+    let success = false
+    
+    while (retries >= 0 && !success) {
+      try {
+        console.log(`Generating article for query: "${query}" (attempts left: ${retries + 1})`)
+        const article = await generateArticle(openaiKey, query)
+        articles.push({ ...article, query }) // Сохраняем query вместе с article
+        success = true
+        console.log(`✅ Successfully generated article for "${query}"`)
+      } catch (error: any) {
+        console.error(`❌ Error generating article for query "${query}" (attempts left: ${retries}):`, error.message)
+        
+        if (retries === 0) {
+          // Последняя попытка не удалась - записываем ошибку
+          errors.push({
+            query,
+            error: error.message || 'Unknown error'
+          })
+        } else {
+          // Ждем перед повтором
+          await new Promise(resolve => setTimeout(resolve, 2000))
+        }
+        retries--
+      }
     }
+  }
+  
+  // Если не удалось сгенерировать ни одной статьи, возвращаем ошибку
+  if (articles.length === 0) {
+    return NextResponse.json({ 
+      error: 'Failed to generate any articles',
+      details: errors,
+      hint: 'Check OpenAI API key and quota. All generation attempts failed.'
+    }, { status: 500 })
+  }
+  
+  // Если часть статей не удалось сгенерировать, предупреждаем, но продолжаем
+  if (errors.length > 0) {
+    console.warn(`⚠️ Generated ${articles.length} articles, but ${errors.length} failed:`, errors)
   }
 
   // Определяем следующий id
@@ -431,8 +462,7 @@ export async function GET(request: Request) {
 
   const postsTs = articles
     .map((a, idx) => {
-      const query = queries[idx]
-      const keywords = extractKeywords(query)
+      const keywords = extractKeywords(a.query) // Используем query из article
       return buildPostObject(nextIdStart + idx, a.title, a.content, keywords)
     })
     .join(',\n')
@@ -441,27 +471,39 @@ export async function GET(request: Request) {
 
   try {
     const result = await putFileToGithub({
-      token: ghToken,
-      repo,
-      path,
-      branch,
+    token: ghToken,
+    repo,
+    path,
+    branch,
       message: `Автопубликация: ${articles.length} новых SEO-статей на основе популярных запросов`,
-      content: updated,
-      sha,
-      authorName,
-      authorEmail,
-    })
-    
+    content: updated,
+    sha,
+    authorName,
+    authorEmail,
+  })
+
     console.log('Successfully published to GitHub:', result.commit?.html_url)
     
-    return NextResponse.json({ 
+    const response: any = {
       ok: true, 
       added: articles.length, 
-      queries: queries,
+      queries: articles.map(a => a.query), // Только успешные запросы
       ai: true,
       commitUrl: result.commit?.html_url,
       message: 'Статьи успешно добавлены в GitHub. Сайт будет пересобран автоматически.'
-    })
+    }
+    
+    // Добавляем информацию об ошибках, если они были
+    if (errors.length > 0) {
+      response.warnings = {
+        failed: errors.length,
+        failedQueries: errors.map(e => e.query),
+        errors: errors
+      }
+      response.message = `Добавлено ${articles.length} статей. ${errors.length} статей не удалось сгенерировать.`
+    }
+    
+    return NextResponse.json(response)
   } catch (error: any) {
     console.error('Error publishing to GitHub:', error)
     return NextResponse.json({ 
