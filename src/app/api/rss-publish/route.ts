@@ -149,29 +149,32 @@ function buildPrompt(query: string) {
 Начни писать статью прямо сейчас, следуя этой структуре. Помни: ГЛУБИНА, КОНКРЕТИКА, ПРИМЕРНЫЕ ЦИФРЫ и РЕАЛИСТИЧНЫЕ ВЫДУМАННЫЕ КЕЙСЫ - это главное.`
 }
 
-async function generateArticle(apiKey: string, query: string): Promise<{ title: string; content: string }> {
+async function generateArticle(apiKey: string, query: string, useGroq: boolean = false): Promise<{ title: string; content: string }> {
   const prompt = buildPrompt(query)
-  
-  // Используем Groq API вместо OpenAI (бесплатно/очень дешево)
-  const useGroq = process.env.USE_GROQ === 'true' || !process.env.OPENAI_API_KEY
-  const groqKey = process.env.GROQ_API_KEY || ''
-  const openaiKey = process.env.OPENAI_API_KEY || ''
   
   try {
     let resp: Response
     let apiUrl: string
     let apiKeyToUse: string
+    let model: string
     
-    if (useGroq && groqKey) {
+    // Определяем какой API использовать
+    const groqKey = process.env.GROQ_API_KEY || ''
+    const openaiKey = process.env.OPENAI_API_KEY || ''
+    const shouldUseGroq = useGroq || (groqKey && groqKey.length > 0)
+    
+    if (shouldUseGroq && groqKey) {
       // Используем Groq API (бесплатно/дешево)
       apiUrl = 'https://api.groq.com/openai/v1/chat/completions'
       apiKeyToUse = groqKey
-      console.log('Using Groq API for article generation')
+      model = 'llama-3.1-70b-versatile' // Groq использует Llama 3.1
+      console.log('✅ Using Groq API for article generation')
     } else if (openaiKey) {
       // Используем OpenAI API
       apiUrl = 'https://api.openai.com/v1/chat/completions'
       apiKeyToUse = openaiKey
-      console.log('Using OpenAI API for article generation')
+      model = 'gpt-4o'
+      console.log('⚠️ Using OpenAI API for article generation (Groq not available)')
     } else {
       throw new Error('No API key provided. Set either GROQ_API_KEY or OPENAI_API_KEY')
     }
@@ -183,7 +186,7 @@ async function generateArticle(apiKey: string, query: string): Promise<{ title: 
         Authorization: `Bearer ${apiKeyToUse}`,
       },
       body: JSON.stringify({
-        model: useGroq ? 'llama-3.1-70b-versatile' : 'gpt-4o', // Groq использует Llama 3.1
+        model: model,
         messages: [
           { 
             role: 'system', 
@@ -345,10 +348,13 @@ function buildPostObject(id: number, title: string, content: string, keywords: s
 
 export async function GET(request: Request) {
   // Поддерживаем и OpenAI, и Groq API
+  // ПРИОРИТЕТ: Groq (бесплатно), если доступен
   const groqKey = process.env.GROQ_API_KEY || ''
   const openaiKey = process.env.OPENAI_API_KEY || ''
-  const useGroq = process.env.USE_GROQ === 'true' || (!openaiKey && groqKey)
+  const useGroq = process.env.USE_GROQ === 'true' || (groqKey && groqKey.length > 0) // Приоритет Groq если есть ключ
   const apiKey = useGroq ? groqKey : openaiKey
+  
+  console.log(`API Selection: useGroq=${useGroq}, groqKey=${groqKey ? 'SET' : 'NOT SET'}, openaiKey=${openaiKey ? 'SET' : 'NOT SET'}`)
   
   const ghToken = process.env.GITHUB_TOKEN || ''
   const repo = process.env.GITHUB_REPO || ''
@@ -436,7 +442,7 @@ export async function GET(request: Request) {
     while (retries >= 0 && !success) {
       try {
         console.log(`Generating article for query: "${query}" (attempts left: ${retries + 1})`)
-        const article = await generateArticle(apiKey, query)
+        const article = await generateArticle(apiKey, query, useGroq)
         articles.push({ ...article, query }) // Сохраняем query вместе с article
         success = true
         console.log(`✅ Successfully generated article for "${query}"`)
