@@ -175,9 +175,13 @@ async function putFileToGithub(params: {
     body: JSON.stringify(body),
   })
   if (!res.ok) {
-    const t = await res.text()
-    throw new Error('GH put failed: ' + t)
+    const errorText = await res.text()
+    console.error(`GitHub API PUT error: ${res.status} ${res.statusText}`)
+    console.error(`URL: ${api}`)
+    console.error(`Response: ${errorText}`)
+    throw new Error(`GH put failed: ${res.status} ${res.statusText} - ${errorText}`)
   }
+  return await res.json()
 }
 
 // Вставка новых статей в начало массива blogPosts
@@ -338,24 +342,41 @@ export async function GET(request: Request) {
 
   const updated = insertPostsIntoSource(current, postsTs)
 
-  await putFileToGithub({
-    token: ghToken,
-    repo,
-    path,
-    branch,
-    message: `Автопубликация: ${articles.length} новых SEO-статей на основе популярных запросов`,
-    content: updated,
-    sha,
-    authorName,
-    authorEmail,
-  })
-
-  return NextResponse.json({ 
-    ok: true, 
-    added: articles.length, 
-    queries: queries,
-    ai: true 
-  })
+  try {
+    const result = await putFileToGithub({
+      token: ghToken,
+      repo,
+      path,
+      branch,
+      message: `Автопубликация: ${articles.length} новых SEO-статей на основе популярных запросов`,
+      content: updated,
+      sha,
+      authorName,
+      authorEmail,
+    })
+    
+    console.log('Successfully published to GitHub:', result.commit?.html_url)
+    
+    return NextResponse.json({ 
+      ok: true, 
+      added: articles.length, 
+      queries: queries,
+      ai: true,
+      commitUrl: result.commit?.html_url,
+      message: 'Статьи успешно добавлены в GitHub. Сайт будет пересобран автоматически.'
+    })
+  } catch (error: any) {
+    console.error('Error publishing to GitHub:', error)
+    return NextResponse.json({ 
+      error: 'Failed to publish articles to GitHub',
+      details: error.message,
+      hint: 'Check GITHUB_TOKEN permissions and GITHUB_REPO format',
+      repo: repo,
+      path: path,
+      branch: branch,
+      articlesGenerated: articles.length
+    }, { status: 500 })
+  }
 }
 
 
