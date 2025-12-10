@@ -89,51 +89,85 @@ function buildPrompt(query: string) {
 
 async function generateArticle(openaiKey: string, query: string): Promise<{ title: string; content: string }> {
   const prompt = buildPrompt(query)
-  const resp = await fetch('https://api.openai.com/v1/chat/completions', {
-    method: 'POST',
-    headers: {
-      'Content-Type': 'application/json',
-      Authorization: `Bearer ${openaiKey}`,
-    },
-    body: JSON.stringify({
-      model: 'gpt-4o-mini',
-      messages: [
-        { 
-          role: 'system', 
-          content: 'Ты опытный копирайтер и SEO-специалист, который пишет полезные, продающие статьи для маркетингового блога T&M Agency - первого рекламного агентства, специализирующегося на продвижении в Telegram. Ты пишешь максимально человекоподобно, даешь реальную ценность читателям и естественно интегрируешь информацию об агентстве.' 
-        },
-        { role: 'user', content: prompt },
-      ],
-      temperature: 0.8, // Увеличил для более естественного текста
-    }),
-  })
-  const data = await resp.json()
-  const fullContent = data?.choices?.[0]?.message?.content || ''
   
-  // Извлекаем заголовок из контента (первая строка с # или первый H1)
-  let title = generateByteOptimizedTitle(query)
-  const titleMatch = fullContent.match(/^#\s+(.+)$/m) || fullContent.match(/<h1[^>]*>(.+?)<\/h1>/i)
-  if (titleMatch && titleMatch[1]) {
-    const extractedTitle = titleMatch[1].trim()
-    // Проверяем длину заголовка в байтах
-    const titleBytes = Buffer.from(extractedTitle, 'utf8').length
-    if (titleBytes >= 40 && titleBytes <= 70) {
-      title = extractedTitle
+  try {
+    const resp = await fetch('https://api.openai.com/v1/chat/completions', {
+      method: 'POST',
+      headers: {
+        'Content-Type': 'application/json',
+        Authorization: `Bearer ${openaiKey}`,
+      },
+      body: JSON.stringify({
+        model: 'gpt-4o-mini',
+        messages: [
+          { 
+            role: 'system', 
+            content: 'Ты опытный копирайтер и SEO-специалист, который пишет полезные, продающие статьи для маркетингового блога T&M Agency - первого рекламного агентства, специализирующегося на продвижении в Telegram. Ты пишешь максимально человекоподобно, даешь реальную ценность читателям и естественно интегрируешь информацию об агентстве.' 
+          },
+          { role: 'user', content: prompt },
+        ],
+        temperature: 0.8,
+      }),
+    })
+    
+    if (!resp.ok) {
+      const errorText = await resp.text()
+      console.error(`OpenAI API error: ${resp.status} ${resp.statusText}`)
+      console.error(`Response: ${errorText}`)
+      throw new Error(`OpenAI API failed: ${resp.status} ${resp.statusText} - ${errorText}`)
     }
+    
+    const data = await resp.json()
+    
+    if (!data?.choices?.[0]?.message?.content) {
+      console.error('OpenAI response structure:', JSON.stringify(data, null, 2))
+      throw new Error('OpenAI returned empty content')
+    }
+    
+    const fullContent = data.choices[0].message.content.trim()
+    
+    if (!fullContent || fullContent.length < 100) {
+      console.error(`Generated content too short: ${fullContent.length} chars`)
+      console.error(`Content preview: ${fullContent.substring(0, 200)}`)
+      throw new Error(`Generated content is too short: ${fullContent.length} characters`)
+    }
+    
+    // Извлекаем заголовок из контента (первая строка с # или первый H1)
+    let title = generateByteOptimizedTitle(query)
+    const titleMatch = fullContent.match(/^#\s+(.+)$/m) || fullContent.match(/<h1[^>]*>(.+?)<\/h1>/i)
+    if (titleMatch && titleMatch[1]) {
+      const extractedTitle = titleMatch[1].trim()
+      // Проверяем длину заголовка в байтах
+      const titleBytes = Buffer.from(extractedTitle, 'utf8').length
+      if (titleBytes >= 40 && titleBytes <= 70) {
+        title = extractedTitle
+      }
+    }
+    
+    // Убираем заголовок из контента, если он там есть
+    let content = fullContent
+      .replace(/^#\s+.+$/m, '') // Убираем markdown заголовок
+      .replace(/<h1[^>]*>.*?<\/h1>/i, '') // Убираем HTML заголовок
+      .trim()
+    
+    // Если контент пустой после удаления заголовка, используем полный контент
+    if (!content || content.length < 50) {
+      console.warn('Content was empty after removing title, using full content')
+      content = fullContent
+    }
+    
+    // Проверяем финальный контент
+    if (!content || content.length < 100) {
+      throw new Error(`Final content is too short: ${content.length} characters`)
+    }
+    
+    console.log(`✅ Generated article for "${query}": title="${title.substring(0, 50)}...", content length=${content.length}`)
+    
+    return { title, content }
+  } catch (error: any) {
+    console.error(`❌ Error generating article for query "${query}":`, error.message)
+    throw error
   }
-  
-  // Убираем заголовок из контента, если он там есть
-  let content = fullContent
-    .replace(/^#\s+.+$/m, '') // Убираем markdown заголовок
-    .replace(/<h1[^>]*>.*?<\/h1>/i, '') // Убираем HTML заголовок
-    .trim()
-  
-  // Если контент пустой, используем полный контент
-  if (!content) {
-    content = fullContent
-  }
-  
-  return { title, content }
 }
 
 async function getFileFromGithub(token: string, repo: string, path: string, branch: string) {
